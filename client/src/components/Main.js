@@ -17,7 +17,7 @@ export class Main extends Component {
                     <TransitionGroup>
                         <CSSTransition
                             key={ location.key }
-                            timeout={ 400 }
+                            timeout={ 6000 }
                             classNames="fade"
                             >
                             <Switch location={ location }>
@@ -51,7 +51,7 @@ const MainContainer = styled.div `
     .fade-appear-active,
     .fade-enter.fade-enter-active {
         opacity: 1;
-        transition: opacity 600ms linear 150ms;
+        transition: opacity 600ms linear 500ms;
     }
 
     .fade-exit {
