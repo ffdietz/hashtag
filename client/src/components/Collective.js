@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-export class AboutCollective extends Component {
+export class Collective extends Component {
 
     paragraph(p) {
         return ( 
@@ -29,7 +29,7 @@ export class AboutCollective extends Component {
     }
 }
 
-export default AboutCollective
+export default Collective
 
 const AboutContainer = styled.div`
     width: 100vw;
@@ -43,7 +43,6 @@ const AboutContainer = styled.div`
 const AboutWrapper = styled.div`
     width: 75vw;
     height: 60vh;
-    margin-top: var(--navbar-height);
 
     display:flex;
     flex-direction: row;
@@ -61,7 +60,7 @@ const Title = styled.h2 `
 
 const BiographyText = styled.p `
     height: 50vh;
-    width: 35%;
+    width: 50vh;
     margin: 0;
     padding: 0;
     text-align: justify;
