@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components'
-// import { Switch } from "react-router-dom";
 import axios from 'axios';
-import ImgChart from './ImgChart'
+import HashtagChart from './HashtagChart'
 
 // Different draw schemas
 // D3 merged to React   http://t.ly/HOvE http://t.ly/b3w5
@@ -31,22 +30,19 @@ export class Hashtag extends Component {
 
     render(){
         return (
-            <HashtagContainer>
+            <>
                 {
                     this.state.init ?
-                    <ImgChart data={ this.state.gallery } size={20}/>
+                    <HashtagChart data={ this.state.gallery } />
                     :
                     <div>loading...</div>
                 }
-            </HashtagContainer>
+            </>
         )
     }
 }
 
 export default Hashtag
 
-const HashtagContainer = styled.div `
-    color: var(--font-color);
-    height: 100vh;
-    left: 10vw;
-`
+
+

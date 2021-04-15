@@ -15,7 +15,7 @@ export default function Footer() {
                         <FooterMenu>
                             <li> <FooterLink to="/" >        home    </FooterLink></li>
                             <li> <FooterLink to="/hashtag" > hashtag </FooterLink></li>
-                            <li> <FooterLink to="/about" >   about   </FooterLink></li>
+                            <li> <FooterLink to="/collective" >   about   </FooterLink></li>
                         </FooterMenu>
                     </FooterColumn> */}
                     

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-    const [isActive, setActive] = useState(false);
+    const [isActive, setActive] = useState(true);
     console.log(isActive);
 
     return (
@@ -18,13 +18,13 @@ const NavBar = () => {
                     <li> <NavLinkItem 
                             exact path to="/hashtag" > hashtag </NavLinkItem> </li>
                     <li> <NavLinkItem 
-                            exact path to="/about" > colectivo </NavLinkItem> </li>
+                            exact path to="/collective" > colectivo </NavLinkItem> </li>
                     <li> <NavLinkItem 
                             exact path to="/contact" > contact </NavLinkItem> </li>
                 </NavMenu>
 
                 <NavIcon 
-                    className={ isActive? 'fas fa-times' : 'fas fa-bars'}
+                    className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
                     onClick={ ()=> { setActive(!isActive) } }
                 />
             </NavWrapper>
@@ -74,8 +74,8 @@ const NavLogo = styled(NavLink) `
 
 const NavMenu = styled.ul `
     display: none;
-    transition: opacity 10s linear 1s;
     opacity: 0;
+    transition: top 5s;
     top: -100%;
 
     &.active{
@@ -83,8 +83,8 @@ const NavMenu = styled.ul `
     display: flex;
     align-items: center;
     margin-left: auto;
-    transition: opacity 10s linear 1s;
     opacity: 1;
+    transition: top 5s;
     top: 0;
     }
 `
@@ -96,8 +96,8 @@ const NavLinkItem = styled(NavLink)`
     color: var(--text);
 
     margin: 0 30px;
-    padding-bottom: 1.2vh;
-    transition: 0.2s ease-in;
+    padding-bottom: 1.2vh;    
+    transition: border 0.3s;
 
     &:hover{
         border-bottom: 4px solid white;
@@ -111,4 +111,11 @@ const NavLinkItem = styled(NavLink)`
 const NavIcon = styled.i`
     font-size: 1.5rem;
     cursor: pointer;
+    transition: opacity 1s linear;
+    opacity: 0.3;
+
+    &.active{
+        transition: opacity 1s;
+        opacity: 1;
+    }
 `
