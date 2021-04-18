@@ -1,15 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import useResizeObserver from "./useResizeObserver";
-import DefsPattern from './DefsPattern'
 import styled from 'styled-components'
-import  { 
-  min,
-  max,
-  select,
-  scaleBand,
-  scaleLinear
-} from 'd3';
-// import * as d3 from 'd3';
+import * as d3 from 'd3';
 
 export default function ImgChart(  props  ) {
 
@@ -17,16 +9,13 @@ export default function ImgChart(  props  ) {
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
 
-
   const [ APIelements ] = useState( props.data );
-  const [ size, setSize ] = useState( 10 );
-  const [ opacity, setOpacity ] = useState( 0.5 );
+  const [ size, setSize ] = useState( 50 );
+  const [ opacity, setOpacity ] = useState( 60 );
+  const [ sorting, setSorting ] = useState("bytes")
 
-console.log(APIelements.length);
-
-  function DefsPattern (target) {
-    return (
-      target
+  function ImageDefsPattern () {
+      d3.select(svgRef.current)
         .append("defs")
         .selectAll(".image-pattern")
         .data(APIelements)
@@ -40,68 +29,71 @@ console.log(APIelements.length);
         .attr("width", 1)
         .attr("preserveAspectRatio", "none")
         .attr("href", (d) => { return d.url } )        //from api object response
-      )
   }
 
   useEffect(() => {
-    const svg = select(svgRef.current);
-    DefsPattern(svg);
+    ImageDefsPattern();
   }, [APIelements] );
 
   useEffect(() => {
-    const svg = select(svgRef.current);
-    const { width, height } =
-    dimensions || wrapperRef.current.getBoundingClientRect();
+    const svg = d3.select(svgRef.current);
+    const margin = ({top: 60, bottom: 10, right: 30, left: 40})
+    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-  const position_x = scaleBand()
-    .domain(APIelements.map((d) => d.bytes))
-    // .domain([ 0, APIelements.length])
-    .range([0, width])
-    .padding(0.5)
+  const xScale =  d3.scaleBand()
+                    .domain(APIelements.map((d) => d.bytes))
+                    .range([margin.left, width - margin.right])
+                    // .range([0, width])
 
-  const position_y = scaleLinear()
-    .domain([min(APIelements, (d) => d.bytes), max(APIelements, (d) => d.bytes)]) 
-    .range([height, 0]);
+  const yScale =  d3.scaleLinear()
+                    .domain([ d3.min(APIelements, (d) => d.bytes), 
+                              d3.max(APIelements, (d) => d.bytes) ]) 
+                    .range([height-margin.bottom, margin.top]);
 
-      svg
+    svg
       .selectAll(".node")
       .data(APIelements)
       .join("rect")
         .attr("class", "node")
-        .style("fill", (d) => { return "url(#" + d.asset_id + ")"})  //id name of pattern
+        // .style("fill", (d) => { return "url(#" + d.asset_id + ")"})  //id name of pattern
+        .style("fill", "none").style("stroke", "red")
 
         .transition().duration(500)
-        .style("fill-opacity", opacity)
+        .style("opacity", opacity / 100)
 
-        .transition().duration(1500)
-        .attr("width",  size * 1 ).attr("height", size *1.1 )
-        
-        .style("object-fit", 'contain')
-        .transition().duration(1500)
-        .attr("x", (d) => position_x(d.bytes))
-        .transition().duration(1500)
-        .attr("y", (d) => position_y(d.bytes))
+        .transition().duration(500)
+        .attr("width", size ).attr("height", size )
 
-}, [APIelements, dimensions, size, opacity] );
+        // .transition().duration(1500)
+        .attr("x", (d) => xScale(d.bytes) - size/2)
+
+        // .transition().duration(1500)
+        .attr("y", (d) => yScale(d.bytes) - size/2)
+
+}, [ dimensions, size, opacity] );
 
   return (
     <HashtagChartContainer>
       <InputContainer>
-        <input 
+        <label for="size"> SIZE </label>
+        <Input 
           id="size" 
           type="number" 
-          min="0" max="80" step="1" defaultValue="40" 
-          value={size}
+          min="0" max="80" step="2" defaultValue="40" 
+          value={ size }
           onChange= { e => setSize(e.target.value) }
         />
-        <input 
+          
+        <label for="opacity"> OPACITY </label>
+        <Input 
           id="opacity"
           type="number"
-          min="0" max="1" step="0.05" defaultValue="1" 
-          value={opacity}
+          min="5" max="100" step="5" defaultValue="60" 
+          value={ opacity }
           onChange= { e => setOpacity(e.target.value) }
         />
       </InputContainer>
+
       <CanvasContainer ref={wrapperRef} >
         <SVGCanvas ref={svgRef} />
       </CanvasContainer>
@@ -110,13 +102,14 @@ console.log(APIelements.length);
 }
 
 const HashtagChartContainer = styled.div `
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--font-color);
 `
 const InputContainer = styled.div `
   display: flex;
@@ -133,6 +126,29 @@ const SVGCanvas = styled.svg `
     width: 100vw;
     height: 100vh;
     /* border: 1px solid orange; */
+`
+const Input = styled.input `
+  width: 50px;
+  height: 40px;
+  line-height: 1.65;
+  /* float: left; */
+  display: block;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  padding-left: 15px;
+
+  background: black;
+  color: var(--font-color);
+  font-size: 1.1rem;  
+  font-family: 'Lato', sans-serif;
+  border: 0.5px solid turquoise;
+  /* border: 1px solid #eee; */
+
+  &:focus {
+  border: 0.5px solid turquoise;
+  }
+}
 `
 
 //Description
