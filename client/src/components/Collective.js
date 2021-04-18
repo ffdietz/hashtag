@@ -18,8 +18,8 @@ export class Collective extends Component {
         return (
             <AboutContainer>
                 <AboutWrapper>
-                    {/* <Title>El Colectivo</Title> */}
-                    {/* <p>By Valentina Montero</p> */}
+                    {/* <Title> El Colectivo </Title>
+                    <p> By Valentina Montero </p> */}
                     <BiographyText>
                         {this.paragraph(Biography)}
                     </BiographyText>
