@@ -52,11 +52,11 @@ const AboutWrapper = styled.div`
     
 `
 
-const Title = styled.h2 `
-    border: 1px solid green;
-    margin: 0;
-    padding: 0;
-`
+// const Title = styled.h2 `
+//     border: 1px solid green;
+//     margin: 0;
+//     padding: 0;
+// `
 
 const BiographyText = styled.p `
     height: 50vh;
