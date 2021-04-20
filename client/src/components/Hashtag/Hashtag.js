@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components'
 import axios from 'axios';
 import HashtagChart from './HashtagChart'
 
@@ -13,7 +12,7 @@ export class Hashtag extends Component {
         super(props);
         this.state = {
             gallery: [],
-            quantity: 600,
+            quantity: 60,
             init: 0,
         }
     }

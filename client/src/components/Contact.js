@@ -77,9 +77,9 @@ const InfoWrapper = styled.div`
 
 `
 
-const InfoTitle = styled.h5`
+// const InfoTitle = styled.h5`
 
-`
+// `
 
 const InfoIcon = styled.i`
 

@@ -4,7 +4,6 @@ import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
     const [isActive, setActive] = useState(true);
-    console.log(isActive);
 
     return (
         <NavBarContainer>
@@ -25,7 +24,7 @@ const NavBar = () => {
 
                 <NavIcon 
                     className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
-                    onClick={ ()=> { setActive(!isActive) } }
+                    onClick={ ()=> { setActive( !isActive ) } }
                 />
             </NavWrapper>
 
@@ -41,7 +40,7 @@ const NavBarContainer = styled.nav `
     position: fixed;
 
     color: var(--font-color);
-    /* background: ${ (isActive)  =>  (isActive? "#222" : 'transparent') }; */
+    //background: ${ (isActive)  =>  (isActive? "#222" : 'transparent') };
     background: transparent;
 
     display: flex;
@@ -59,7 +58,6 @@ const NavWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     /* border: 1px solid white; */
-    
 `
 
 const NavLogo = styled(NavLink) `
@@ -74,8 +72,8 @@ const NavLogo = styled(NavLink) `
 
 const NavMenu = styled.ul `
     display: none;
+    transition: top 5s opacity 1s;
     opacity: 0;
-    transition: top 5s;
     top: -100%;
 
     &.active{
@@ -84,7 +82,7 @@ const NavMenu = styled.ul `
     align-items: center;
     margin-left: auto;
     opacity: 1;
-    transition: top 5s;
+    transition: top 5s opacity 1s;
     top: 0;
     }
 `
@@ -96,7 +94,7 @@ const NavLinkItem = styled(NavLink)`
     color: var(--text);
 
     margin: 0 30px;
-    padding-bottom: 1.2vh;    
+    padding-bottom: 1.2vh;
     transition: border 0.3s;
 
     &:hover{
