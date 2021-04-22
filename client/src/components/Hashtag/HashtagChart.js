@@ -10,8 +10,8 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);
 
   const [ APIelements ] = useState( props.data );
-  const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 70 );
+  const [ size, setSize ] = useState( 10 );
+  const [ opacity, setOpacity ] = useState( 60 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
   // const [ sorting, setSorting ] = useState("bytes")
 
@@ -63,15 +63,19 @@ export default function ImgChart(  props  ) {
                             .on("zoom", (event) => {
                               // xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
                               // svg.selectAll(".node").attr("xScale", d => xScale(d.bytes));
-                              // const zoomState = event.transform;
+                              const zoomState = event.transform;
                               // setCurrentZoomState(zoomState);
 
-                              // const newScale = `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`;                              
-                              // svg.transition().duration(750)
-                              //     .attr("transform", newScale)
+                              const newScale = `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`;
+                              svg//.transition().duration(750)
+                                  .attr("transform", newScale)
                               // console.log(newScale);
                             });
 
+                            
+        
+    // svg.call(zoomBehavior);
+    
     svg
       .selectAll(".node")
       .data(APIelements)
@@ -83,16 +87,14 @@ export default function ImgChart(  props  ) {
         .transition().duration(500)
         .style("opacity", opacity / 100)
 
-        .transition().duration(500)
-        .attr("width", 100 ).attr("height", 100 )
+        // .transition().duration(500)
+        .attr("width", size ).attr("height", size )
 
-        .transition().duration(1500)
+        // .transition().duration(1500)
         .attr("x", (d) => xScale(d.bytes) - size/2)
 
-        .transition().duration(1500)
+        // .transition().duration(1500)
         .attr("y", (d) => yScale(d.bytes) - size/2)
-
-    svg.call(zoomBehavior);
 
 }, [ dimensions, size, opacity, currentZoomState] );
 

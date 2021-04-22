@@ -12,17 +12,27 @@ export class Hashtag extends Component {
         super(props);
         this.state = {
             gallery: [],
-            quantity: 60,
+            quantity: 500,
             init: 0,
         }
     }
 
+    // async componentDidMount(){
+    //     const response = await axios.get(`http://localhost:5500/hashtag/${this.state.quantity}`)
+    //     .then(response => { return response })
+    //     .catch(error => console.log(error));
+    //     this.setState({ 
+    //         gallery: response.data.resources,
+    //         init:1
+    //     }) 
+    // }
+
     async componentDidMount(){
-        const response = await axios.get(`http://localhost:5500/api/${this.state.quantity}`)
-        .then(response => { return response })
+        const response = await axios.get(`http://localhost:5500/hashtag`)
+        .then(response => { console.log(response); return response })
         .catch(error => console.log(error));
         this.setState({ 
-            gallery: response.data.resources,
+            gallery: response.data,
             init:1
         }) 
     }
