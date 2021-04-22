@@ -56,17 +56,21 @@ export default function ImgChart(  props  ) {
                       .range([height-margin.bottom, margin.top]);
     
     const zoomBehavior =  d3.zoom()
-                            .scaleExtent([0.5, 10])
+                            .scaleExtent([0.5, 5])
                             .translateExtent([
-                              [ margin.left, margin.top ], 
-                              [ width - margin.right, height-margin.bottom ] ])
+                              [ 0, 0 ], 
+                              [ width , height ] ])
                             .on("zoom", (event) => {
                               // xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
                               // svg.selectAll(".node").attr("xScale", d => xScale(d.bytes));
                               const zoomState = event.transform;
                               // setCurrentZoomState(zoomState);
 
-                              const newScale = `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`;
+                              const newScale = `
+                                        translate(${ - width / 2} , ${ - height / 2 } )
+                                        scale(${zoomState.k})
+                                        translate(${ - zoomState.x}, ${ - zoomState.y}) 
+                                        `;
                               svg//.transition().duration(750)
                                   .attr("transform", newScale)
                               // console.log(newScale);
@@ -95,6 +99,8 @@ export default function ImgChart(  props  ) {
 
         // .transition().duration(1500)
         .attr("y", (d) => yScale(d.bytes) - size/2)
+
+    svg.call(zoomBehavior)
 
 }, [ dimensions, size, opacity, currentZoomState] );
 
