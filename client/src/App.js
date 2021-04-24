@@ -10,7 +10,7 @@ export default function App() {
       <Router>
         <Navbar />
         <Main />
-        <Footer />
+        {/* <Footer /> */}
       </Router>
     </div>
   );

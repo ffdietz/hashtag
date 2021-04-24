@@ -12,7 +12,7 @@ export class Hashtag extends Component {
         super(props);
         this.state = {
             gallery: [],
-            quantity: 500,
+            quantity: 10,
             init: 0,
         }
     }
