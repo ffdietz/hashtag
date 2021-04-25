@@ -3,113 +3,124 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
+const getDate = dateString => {
+  const date = dateString.split(/[-_.]/);
+  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+};
+
 export default function ImgChart(  props  ) {
 
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
+  const dimensions = useResizeObserver(wrapperRef);  
 
   const [ APIelements ] = useState( props.data );
   const [ size, setSize ] = useState( 50 );
   const [ opacity, setOpacity ] = useState( 100 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  const [ XScaleFaktor, setXScaleFaktor ] = useState(1);
-  const [ YScaleFaktor, setYScaleFaktor ] = useState(1);  
-  const [ viewState, setViewState ] = useState(false);
+  const [ viewBorderState ] = useState(true);
   // const [ sorting, setSorting ] = useState("bytes")
 
-  function ImageDefsPattern () {
-      d3.select(svgRef.current)
-        .append("defs")
-        .selectAll(".image-pattern")
-        .data(APIelements)
-        .join("pattern")
-        .attr("id", (d) => { return d.asset_id })     //from api object response
-        .attr("height", "100%")
-        .attr("width", "100%")
-        .attr("patternContentUnits","objectBoundingBox")
-        .append("image")
-        .attr("height", 1)
-        .attr("width", 1)
-        .attr("preserveAspectRatio", "none")
-        .attr("href", (d) => { 
-          const quality = "q_60";
-          d.url;
-          console.log(quality);
-          return quality 
-        } )        //from api object response
-  }
+  // const zoomInit = d3.zoomIdentity.scale(0.1);
 
   useEffect(() => {
-    ImageDefsPattern();
-  }, [APIelements] );
+    d3.select(svgRef.current)
+      .append("defs")
+      .selectAll(".image-pattern")
+      .data(APIelements)
+      .join("pattern")
+      .attr("id", (d) => { return d.asset_id })     //from api object response
+      .attr("height", "100%")
+      .attr("width", "100%")
+      .attr("patternContentUnits","objectBoundingBox")
+      .append("image")
+      .attr("height", 1)
+      .attr("width", 1)
+      .attr("preserveAspectRatio", "none")
+      .attr("href", (d) => { return d.url })        //from api object response
+  }, [ APIelements ] );
 
   useEffect(() => {
     const svg = d3.select(svgRef.current);
-    const margin = ({top: 60, bottom: 10, right: 30, left: 40})
-    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    const margin = ({top: 60, bottom: 10, right: 30, left: 40});    
+    if (!dimensions) return;
 
-    const xScale =  d3.scaleBand()
-                      .domain( APIelements.map((d) => d.bytes ))
-                      .range([ margin.left, (width - margin.right)  ])
+    width = width * 4;
+    height = height *3;
 
-    const yScale =  d3.scaleLinear()
-                      .domain([ d3.min(APIelements, (d) => d.bytes), 
-                                d3.max(APIelements, (d) => d.bytes) ]) 
-                      .range([(height - margin.bottom) , margin.top]);
-    
+    const minDate = d3.min(APIelements, (d) => getDate(d.ig_uploaded_at));
+    const maxDate = d3.max(APIelements, (d) => getDate(d.ig_uploaded_at));
+
+const xScale =  d3.scaleBand()
+                  .domain( APIelements.map((d) => d.bytes ))
+                  .range([ margin.left, width - margin.right ])
+
+const yScale =  d3.scaleLinear()
+                  .domain([ d3.min(APIelements, (d) => d.bytes), 
+                            d3.max(APIelements, (d) => d.bytes) ]) 
+                  .range([height-margin.bottom, margin.top]);
+
+    // const xScale =  d3.scaleTime()
+    //                   .domain([ minDate, maxDate ]) 
+    //                   .range([margin.left, width - margin.right]);
+
+    // const yScale =  d3.scaleLinear()
+    //                   .domain([ 0, 
+    //                             d3.max(APIelements, (d) => d.bytes) ]) 
+    //                   .range([(margin.top, height - margin.bottom)]);
+
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([
                         [ 0, 0 ], 
-                        [ width , height ] ])
+                        [ width, height] ])
                       .on("zoom", (event) => {
-                        xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
-                        svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
-                        const zoomState = event.transform;
-                        setCurrentZoomState(zoomState);
-                        // console.log(zoomState);
-                        // const newScale = `
-                        //           translate(${ (zoomState.x)} , ${ (zoomState.y) } )
-                        //           scale(${zoomState.k})
-                        //           `;
-                        svg.selectAll("rect")
-                            .transition().duration(250)
-                            .attr("transform", zoomState.toString())
-                        // console.log(newScale);
+                        setCurrentZoomState(event.transform);
+                      svg
+                        .selectAll("rect")
+                        .transition().duration(100)
+                        .attr("transform", currentZoomState.toString())
                       });
+    // function clicked(event, [x, y]) {
+    //   event.stopPropagation();
+    //   svg.transition().duration(750).call(
+    //     d3.zoom.transform,
+    //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
+    //     // d3.mouse(svg.node())
+    //   );
+    // }
 
-    svg
-      .selectAll(".node")
+    svg.selectAll(".node")
       .data(APIelements)
       .join("rect")
-        .attr("class", "node")
-        .attr("fill", (d) => {
-          if(viewState) return "none" 
-          return `url( #${d.asset_id} )` 
-          })  //id name of pattern
-          .attr("stroke", () => {
-            if(!viewState) return "none" 
-            return "red"
-          })
+      .attr("class", "node")
+      .attr("fill", (d) => {
+        if(viewBorderState) return "none" 
+        return `url( #${d.asset_id} )` 
+        })  //id name of pattern
+      .attr("stroke", () => {
+        if(!viewBorderState) { return "none" }
+        return "red"
+      })
+      // .transition().duration(500)
+      .style("opacity", opacity / 100)
+      // .transition().duration(500)
+      .attr("width", 80 ).attr("height", 80 )
+      // .transition().duration(1500)
+      // .attr("x", (d) => xScale(getDate(d.ig_uploaded_at)) )
+      .attr("x", (d) => xScale(d.bytes) )
+      // .transition().duration(1500)
+      .attr("y", (d) => yScale(d.bytes) )
 
-        // .transition().duration(500)
-        .style("opacity", opacity / 100)
-        // .transition().duration(500)
-        .attr("width", 80 ).attr("height", 80 )
-        // .transition().duration(1500)
-        .attr("x", (d) => xScale(d.bytes) - 80/2)
-        // .transition().duration(1500)
-        .attr("y", (d) => yScale(d.bytes) - 80/2)
-        
     svg.call(zoomed);
 
-}, [ dimensions, size, opacity, currentZoomState, XScaleFaktor, YScaleFaktor, viewState ]);
+}, [ dimensions, size, opacity, currentZoomState, viewBorderState ]);
 
   return (
     <HashtagChartContainer>
       <InputWrapper>
-        <label for="size"> SIZE </label>
+        {/* <label for="size"> SIZE </label>
         <Input 
           id="size" 
           type="number" 
@@ -125,7 +136,7 @@ export default function ImgChart(  props  ) {
           min="5" max="100" step="5" defaultValue="60" 
           value={ opacity }
           onChange= { e => setOpacity(e.target.value) }
-        />
+        /> */}
 
         {/* <label for="XScale"> XScale </label>
         <Input 
@@ -174,6 +185,7 @@ const CanvasContainer = styled.div `
 const SVGCanvas = styled.svg `
     width: 95vw;
     height: 85vh;
+    cursor: crosshair;
     /* border: 1px solid orange; */
 `
 const InputWrapper = styled.div `
