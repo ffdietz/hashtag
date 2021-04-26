@@ -3,10 +3,10 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-const getDate = dateString => {
-  const date = dateString.split(/[-_.]/);
-  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
-};
+// const getDate = dateString => {
+//   const date = dateString.split(/[-_.]/);
+//   return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+// };
 
 export default function ImgChart(  props  ) {
 
@@ -16,9 +16,8 @@ export default function ImgChart(  props  ) {
 
   const [ data ] = useState( props.data );
   const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 100 );
+  const [ opacity, setOpacity ] = useState( 60 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  const [ viewBorderState ] = useState(false);
   // const [ sorting, setSorting ] = useState("bytes")
 
   // const zoomInit = d3.zoomIdentity.scale(0.1);
@@ -40,27 +39,18 @@ export default function ImgChart(  props  ) {
       .attr("href", (d) => { return d.url })        //from api object response
   }, [ data ] );
 
-  useEffect(() => {
+  useEffect(() => {    
+    const svg = d3.select(svgRef.current)
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
     const margin = ({top: 60, bottom: 10, right: 30, left: 40});
 
     // width   = width   * 4;
     // height  = height  * 3;
     
-    const svg = d3.select(svgRef.current)
                   // .attr("viewBox", [-width / 2, -height / 2, width, height])
 
     // const minDate = d3.min(data, (d) => getDate(d.ig_uploaded_at));
     // const maxDate = d3.max(data, (d) => getDate(d.ig_uploaded_at));
-
-    const xScale =  d3.scaleBand()
-                      .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left, width - margin.right ])
-
-    const yScale =  d3.scaleLinear()
-                      .domain([ d3.min(data, (d) => d.bytes), 
-                                d3.max(data, (d) => d.bytes) ]) 
-                      .range([height-margin.bottom, margin.top]);
 
     // const xScale =  d3.scaleTime()
     //                   .domain([ minDate, maxDate ]) 
@@ -71,42 +61,42 @@ export default function ImgChart(  props  ) {
     //                             d3.max(data, (d) => d.bytes) ]) 
     //                   .range([(margin.top, height - margin.bottom)]);
 
-    let transform;
+    const xScale =  d3.scaleBand()
+                      .domain( data.map((d) => d.bytes ))
+                      .range([ margin.left, width - margin.right ])
+
+    const yScale =  d3.scaleLinear()
+                      .domain([ d3.min(data, (d) => d.bytes), 
+                                d3.max(data, (d) => d.bytes) ]) 
+                      .range([height - margin.top, margin.bottom]);
+
     const zoomed =  d3.zoom()
-                      .scaleExtent([0.1, 15])
+                      .scaleExtent([0.1, 10])
                       .translateExtent([
                         [ 0, 0 ], 
-                        [ width, height] ])
+                        [ width , height ] ])
                       .on("zoom", (event) => {
                         setCurrentZoomState(event.transform);
-                        g.attr("transform", (transform = currentZoomState))
-                        // .selectAll("rect")
-                        // .transition().duration(100)
-                        // .attr("transform", currentZoomState.toString())
+                        svg
+                          // .selectAll("rect")
+                          // .transition().duration(100)
+                          .attr("transform", currentZoomState.toString())
                       });
-    // function clicked(event, [x, y]) {
-    //   event.stopPropagation();
-    //   svg.transition().duration(750).call(
-    //     d3.zoom.transform,
-    //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
-    //     // d3.mouse(svg.node())
-    //   );
-    // }
+  // function clicked(event, [x, y]) {
+  //   event.stopPropagation();
+  //   svg.transition().duration(750).call(
+  //     d3.zoom.transform,
+  //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
+  //     // d3.mouse(svg.node())
+  //   );
+  // }
 
-    const g = svg.append("g");
-
-    const imageNode = g
+    svg
       .selectAll(".node")
       .data(data)
       .join("rect")
-      .attr("fill", (d) => {
-        if(viewBorderState) return "none" 
-        return `url( #${d.asset_id} )` 
-        })  //id name of pattern
-      .attr("stroke", () => {
-        if(!viewBorderState) { return "none" }
-        return "red"
-      })
+      .attr('class', 'rect')
+      .attr("fill", (d) => { return "url(#" + d.asset_id +")" })  //id name of pattern
       // .transition().duration(500)
       .attr("opacity", opacity / 100)
       // .transition().duration(500)
@@ -116,10 +106,10 @@ export default function ImgChart(  props  ) {
       .attr("x", (d) => xScale(d.bytes) )
       // .transition().duration(1500)
       .attr("y", (d) => yScale(d.bytes) )
+      
+    svg.call(zoomed);
 
-    g.call(zoomed);
-
-}, [ dimensions, size, opacity, currentZoomState, viewBorderState ]);
+}, [ dimensions, size, opacity, currentZoomState]);
 
   return (
     <HashtagChartContainer>
