@@ -14,11 +14,11 @@ export default function ImgChart(  props  ) {
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);  
 
-  const [ APIelements ] = useState( props.data );
+  const [ data ] = useState( props.data );
   const [ size, setSize ] = useState( 50 );
   const [ opacity, setOpacity ] = useState( 100 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  const [ viewBorderState ] = useState(true);
+  const [ viewBorderState ] = useState(false);
   // const [ sorting, setSorting ] = useState("bytes")
 
   // const zoomInit = d3.zoomIdentity.scale(0.1);
@@ -27,7 +27,7 @@ export default function ImgChart(  props  ) {
     d3.select(svgRef.current)
       .append("defs")
       .selectAll(".image-pattern")
-      .data(APIelements)
+      .data(data)
       .join("pattern")
       .attr("id", (d) => { return d.asset_id })     //from api object response
       .attr("height", "100%")
@@ -38,28 +38,29 @@ export default function ImgChart(  props  ) {
       .attr("width", 1)
       .attr("preserveAspectRatio", "none")
       .attr("href", (d) => { return d.url })        //from api object response
-  }, [ APIelements ] );
+  }, [ data ] );
 
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
-    const margin = ({top: 60, bottom: 10, right: 30, left: 40});    
-    if (!dimensions) return;
+    const margin = ({top: 60, bottom: 10, right: 30, left: 40});
 
-    width = width * 4;
-    height = height *3;
+    // width   = width   * 4;
+    // height  = height  * 3;
+    
+    const svg = d3.select(svgRef.current)
+                  // .attr("viewBox", [-width / 2, -height / 2, width, height])
 
-    const minDate = d3.min(APIelements, (d) => getDate(d.ig_uploaded_at));
-    const maxDate = d3.max(APIelements, (d) => getDate(d.ig_uploaded_at));
+    // const minDate = d3.min(data, (d) => getDate(d.ig_uploaded_at));
+    // const maxDate = d3.max(data, (d) => getDate(d.ig_uploaded_at));
 
-const xScale =  d3.scaleBand()
-                  .domain( APIelements.map((d) => d.bytes ))
-                  .range([ margin.left, width - margin.right ])
+    const xScale =  d3.scaleBand()
+                      .domain( data.map((d) => d.bytes ))
+                      .range([ margin.left, width - margin.right ])
 
-const yScale =  d3.scaleLinear()
-                  .domain([ d3.min(APIelements, (d) => d.bytes), 
-                            d3.max(APIelements, (d) => d.bytes) ]) 
-                  .range([height-margin.bottom, margin.top]);
+    const yScale =  d3.scaleLinear()
+                      .domain([ d3.min(data, (d) => d.bytes), 
+                                d3.max(data, (d) => d.bytes) ]) 
+                      .range([height-margin.bottom, margin.top]);
 
     // const xScale =  d3.scaleTime()
     //                   .domain([ minDate, maxDate ]) 
@@ -67,9 +68,10 @@ const yScale =  d3.scaleLinear()
 
     // const yScale =  d3.scaleLinear()
     //                   .domain([ 0, 
-    //                             d3.max(APIelements, (d) => d.bytes) ]) 
+    //                             d3.max(data, (d) => d.bytes) ]) 
     //                   .range([(margin.top, height - margin.bottom)]);
 
+    let transform;
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([
@@ -77,10 +79,10 @@ const yScale =  d3.scaleLinear()
                         [ width, height] ])
                       .on("zoom", (event) => {
                         setCurrentZoomState(event.transform);
-                      svg
-                        .selectAll("rect")
-                        .transition().duration(100)
-                        .attr("transform", currentZoomState.toString())
+                        g.attr("transform", (transform = currentZoomState))
+                        // .selectAll("rect")
+                        // .transition().duration(100)
+                        // .attr("transform", currentZoomState.toString())
                       });
     // function clicked(event, [x, y]) {
     //   event.stopPropagation();
@@ -91,10 +93,12 @@ const yScale =  d3.scaleLinear()
     //   );
     // }
 
-    svg.selectAll(".node")
-      .data(APIelements)
+    const g = svg.append("g");
+
+    const imageNode = g
+      .selectAll(".node")
+      .data(data)
       .join("rect")
-      .attr("class", "node")
       .attr("fill", (d) => {
         if(viewBorderState) return "none" 
         return `url( #${d.asset_id} )` 
@@ -104,7 +108,7 @@ const yScale =  d3.scaleLinear()
         return "red"
       })
       // .transition().duration(500)
-      .style("opacity", opacity / 100)
+      .attr("opacity", opacity / 100)
       // .transition().duration(500)
       .attr("width", 80 ).attr("height", 80 )
       // .transition().duration(1500)
@@ -113,7 +117,7 @@ const yScale =  d3.scaleLinear()
       // .transition().duration(1500)
       .attr("y", (d) => yScale(d.bytes) )
 
-    svg.call(zoomed);
+    g.call(zoomed);
 
 }, [ dimensions, size, opacity, currentZoomState, viewBorderState ]);
 
@@ -210,10 +214,6 @@ const Input = styled.input `
   font-family: 'Lato';
   border: none;
   /* border: 0.5px solid turquoise; */
-
-  &:focus {
-  border: 0.5px solid turquoise;
-  }
 }
 `
 
