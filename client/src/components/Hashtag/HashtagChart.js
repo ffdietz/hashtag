@@ -11,8 +11,11 @@ export default function ImgChart(  props  ) {
 
   const [ APIelements ] = useState( props.data );
   const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 70 );
+  const [ opacity, setOpacity ] = useState( 100 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
+  const [ XScaleFaktor, setXScaleFaktor ] = useState(1);
+  const [ YScaleFaktor, setYScaleFaktor ] = useState(1);  
+  const [ viewState, setViewState ] = useState(false);
   // const [ sorting, setSorting ] = useState("bytes")
 
   function ImageDefsPattern () {
@@ -29,7 +32,12 @@ export default function ImgChart(  props  ) {
         .attr("height", 1)
         .attr("width", 1)
         .attr("preserveAspectRatio", "none")
-        .attr("href", (d) => { return d.url } )        //from api object response
+        .attr("href", (d) => { 
+          const quality = "q_60";
+          d.url;
+          console.log(quality);
+          return quality 
+        } )        //from api object response
   }
 
   useEffect(() => {
@@ -43,62 +51,64 @@ export default function ImgChart(  props  ) {
 
     const xScale =  d3.scaleBand()
                       .domain( APIelements.map((d) => d.bytes ))
-                      .range([ margin.left, width - margin.right ])
-
-    // if (currentZoomState) {
-    //   const newXScale = currentZoomState.scale(xScale).domain();
-    //   xScale.domain(currentZoomState.rescale(xScale).domain());
-    // }
+                      .range([ margin.left, (width - margin.right)  ])
 
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(APIelements, (d) => d.bytes), 
                                 d3.max(APIelements, (d) => d.bytes) ]) 
-                      .range([height-margin.bottom, margin.top]);
+                      .range([(height - margin.bottom) , margin.top]);
     
-    const zoomBehavior =  d3.zoom()
-                            .scaleExtent([0.5, 10])
-                            .translateExtent([
-                              [ margin.left, margin.top ], 
-                              [ width - margin.right, height-margin.bottom ] ])
-                            .on("zoom", (event) => {
-                              // xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
-                              // svg.selectAll(".node").attr("xScale", d => xScale(d.bytes));
-                              // const zoomState = event.transform;
-                              // setCurrentZoomState(zoomState);
-
-                              // const newScale = `translate(${zoomState.x}, ${zoomState.y}) scale(${zoomState.k})`;                              
-                              // svg.transition().duration(750)
-                              //     .attr("transform", newScale)
-                              // console.log(newScale);
-                            });
+    const zoomed =  d3.zoom()
+                      .scaleExtent([0.1, 15])
+                      .translateExtent([
+                        [ 0, 0 ], 
+                        [ width , height ] ])
+                      .on("zoom", (event) => {
+                        xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
+                        svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
+                        const zoomState = event.transform;
+                        setCurrentZoomState(zoomState);
+                        // console.log(zoomState);
+                        // const newScale = `
+                        //           translate(${ (zoomState.x)} , ${ (zoomState.y) } )
+                        //           scale(${zoomState.k})
+                        //           `;
+                        svg.selectAll("rect")
+                            .transition().duration(250)
+                            .attr("transform", zoomState.toString())
+                        // console.log(newScale);
+                      });
 
     svg
       .selectAll(".node")
       .data(APIelements)
       .join("rect")
         .attr("class", "node")
-        .style("fill", (d) => { return "url(#" + d.asset_id + ")"})  //id name of pattern
-        // .style("fill", "none").style("stroke", "red")
+        .attr("fill", (d) => {
+          if(viewState) return "none" 
+          return `url( #${d.asset_id} )` 
+          })  //id name of pattern
+          .attr("stroke", () => {
+            if(!viewState) return "none" 
+            return "red"
+          })
 
-        .transition().duration(500)
+        // .transition().duration(500)
         .style("opacity", opacity / 100)
+        // .transition().duration(500)
+        .attr("width", 80 ).attr("height", 80 )
+        // .transition().duration(1500)
+        .attr("x", (d) => xScale(d.bytes) - 80/2)
+        // .transition().duration(1500)
+        .attr("y", (d) => yScale(d.bytes) - 80/2)
+        
+    svg.call(zoomed);
 
-        .transition().duration(500)
-        .attr("width", 100 ).attr("height", 100 )
-
-        .transition().duration(1500)
-        .attr("x", (d) => xScale(d.bytes) - size/2)
-
-        .transition().duration(1500)
-        .attr("y", (d) => yScale(d.bytes) - size/2)
-
-    svg.call(zoomBehavior);
-
-}, [ dimensions, size, opacity, currentZoomState] );
+}, [ dimensions, size, opacity, currentZoomState, XScaleFaktor, YScaleFaktor, viewState ]);
 
   return (
     <HashtagChartContainer>
-      <InputContainer>
+      <InputWrapper>
         <label for="size"> SIZE </label>
         <Input 
           id="size" 
@@ -116,7 +126,26 @@ export default function ImgChart(  props  ) {
           value={ opacity }
           onChange= { e => setOpacity(e.target.value) }
         />
-      </InputContainer>
+
+        {/* <label for="XScale"> XScale </label>
+        <Input 
+          id="XScale" 
+          type="number" 
+          min="0" max="10" step="0.5" defaultValue="1" 
+          value={ XScaleFaktor }
+          onChange= { e => setXScaleFaktor(e.target.value) }
+        />
+
+        <label for="YScale"> YScale </label>
+        <Input 
+          id="YScale" 
+          type="number" 
+          min="0" max="10" step="0.5" defaultValue="1" 
+          value={ YScaleFaktor }
+          onChange= { e => setYScaleFaktor(e.target.value) }
+        /> */}
+
+      </InputWrapper>
 
       <CanvasContainer ref={wrapperRef} >
         <SVGCanvas ref={svgRef} />
@@ -135,27 +164,28 @@ const HashtagChartContainer = styled.div `
   align-items: center;
   color: var(--font-color);
 `
-const InputContainer = styled.div `
-  display: flex;
-  flex-direction: column;
-`
-
 const CanvasContainer = styled.div `
-  width: 90vw;
-  height: 80vh;
+  width: 95vw;
+  height: 85vh;
   margin: auto;
+  margin-top:10vh;
   /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
-    width: 100vw;
-    height: 100vh;
+    width: 95vw;
+    height: 85vh;
     /* border: 1px solid orange; */
+`
+const InputWrapper = styled.div `
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
 `
 const Input = styled.input `
   width: 50px;
   height: 40px;
   line-height: 1.65;
-  /* float: left; */
+  float: left;
   display: block;
   padding: 0;
   margin: 0;
@@ -164,10 +194,10 @@ const Input = styled.input `
 
   background: black;
   color: var(--font-color);
-  font-size: 1.1rem;  
-  font-family: 'Lato', sans-serif;
-  border: 0.5px solid turquoise;
-  /* border: 1px solid #eee; */
+  font-size: 1.3rem;  
+  font-family: 'Lato';
+  border: none;
+  /* border: 0.5px solid turquoise; */
 
   &:focus {
   border: 0.5px solid turquoise;
@@ -183,3 +213,6 @@ const Input = styled.input `
   // from given range to the axis size
   // create defs/pattern to fill a shape with image
   // load each image with an id and then fill:url(#id)
+
+
+  // https://www.freecodecamp.org/news/get-ready-to-zoom-and-pan-like-a-pro-after-reading-this-in-depth-tutorial-5d963b0a153e/
