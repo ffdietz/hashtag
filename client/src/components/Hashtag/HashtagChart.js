@@ -8,8 +8,9 @@ export default function ImgChart(  props  ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
+  console.log(props);
 
-  const [ APIelements ] = useState( props.data );
+  const [ APIelements ] = useState( props.data.resources );
   const [ size, setSize ] = useState( 50 );
   const [ opacity, setOpacity ] = useState( 100 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
@@ -32,12 +33,7 @@ export default function ImgChart(  props  ) {
         .attr("height", 1)
         .attr("width", 1)
         .attr("preserveAspectRatio", "none")
-        .attr("href", (d) => { 
-          const quality = "q_60";
-          d.url;
-          console.log(quality);
-          return quality 
-        } )        //from api object response
+        .attr("href", (d) => { return d.url } )        //from api object response
   }
 
   useEffect(() => {
