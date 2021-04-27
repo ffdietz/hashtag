@@ -9,7 +9,7 @@ router.get('/', (req, res, next) => {
   // res.render('index');
 });
 
-// Call the cloudinary api 
+// Call the cloudinary api
 router.get('/api', async (req, res) => {
   const images = await cloudinary.api.resources(
       {
@@ -39,5 +39,42 @@ router.get('/api/:quantity', async (req, res) => {
     );
     return res.json( images );
     });
+
+  router.get('/hashtag/resources', async (req, res) => {
+    async function list_resources(results, next_cursor = null) {
+      await new Promise((resolve) => {
+          cloudinary.api.resources(
+              {
+                  resource_type: "image",
+                  max_results: 500,
+                  next_cursor: next_cursor,
+              },
+              function (err, res) {
+                  if (err) {
+                      console.log(err);
+                      resolve();
+                      
+                  } else {
+                      res.resources.forEach(function (resource) {
+                          results.push(resource);
+                      });
+
+                      if (res.next_cursor) {
+                          list_resources(results, res.next_cursor).then(() => resolve());
+                      } else {
+                          resolve();
+                      }
+                  }
+                  
+              }
+          );
+      });
+  }
+
+  const results = [];
+  await list_resources(results);
+  console.log(results);
+  return res.status(200).json(results);
+});
 
 module.exports = router;

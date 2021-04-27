@@ -10,7 +10,7 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);
   console.log(props);
 
-  const [ APIelements ] = useState( props.data.resources );
+  const [ APIelements ] = useState( props.data );
   const [ size, setSize ] = useState( 50 );
   const [ opacity, setOpacity ] = useState( 100 );
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
@@ -43,7 +43,9 @@ export default function ImgChart(  props  ) {
   useEffect(() => {
     const svg = d3.select(svgRef.current);
     const margin = ({top: 60, bottom: 10, right: 30, left: 40})
-    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+
+    width = width *4;
 
     const xScale =  d3.scaleBand()
                       .domain( APIelements.map((d) => d.bytes ))
@@ -70,7 +72,7 @@ export default function ImgChart(  props  ) {
                         //           scale(${zoomState.k})
                         //           `;
                         svg.selectAll("rect")
-                            .transition().duration(250)
+                            .transition().duration(10)
                             .attr("transform", zoomState.toString())
                         // console.log(newScale);
                       });
@@ -93,9 +95,9 @@ export default function ImgChart(  props  ) {
         .style("opacity", opacity / 100)
         // .transition().duration(500)
         .attr("width", 80 ).attr("height", 80 )
-        // .transition().duration(1500)
+        .transition().duration(1500)
         .attr("x", (d) => xScale(d.bytes) - 80/2)
-        // .transition().duration(1500)
+        .transition().duration(1500)
         .attr("y", (d) => yScale(d.bytes) - 80/2)
         
     svg.call(zoomed);
