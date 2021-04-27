@@ -73,6 +73,7 @@ const NavLogo = styled(NavLink) `
 const NavMenu = styled.ul `
     display: none;
     transition: top 5s opacity 1s;
+    background: transparent;
     opacity: 0;
     top: -100%;
 

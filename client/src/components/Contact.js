@@ -11,7 +11,7 @@ export class Contact extends Component {
                     <InfoWrapper>
                         {/* <InfoTitle>Dirección</InfoTitle> */}
                         <InfoIcon className='fas fa-map-marker-alt'/>
-                        <InfoText></InfoText>
+                        <InfoText>address</InfoText>
                     </InfoWrapper>
 
                     <InfoWrapper>
@@ -66,8 +66,8 @@ const ContactWrapper = styled.div `
     padding: 10px;
 
     /* border: 1px solid green; */
-    border-radius: 20px;
-    background: rgba(255,255,255,0.1);
+    /* border-radius: 20px; */
+    /* background: rgba(255,255,255,0.1); */
 `
 
 const InfoWrapper = styled.div`
