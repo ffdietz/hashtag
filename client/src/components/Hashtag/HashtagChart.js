@@ -46,6 +46,7 @@ export default function ImgChart(  props  ) {
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
     width = width *4;
+    height = height *3;
 
     const xScale =  d3.scaleBand()
                       .domain( APIelements.map((d) => d.bytes ))
@@ -62,8 +63,8 @@ export default function ImgChart(  props  ) {
                         [ 0, 0 ], 
                         [ width , height ] ])
                       .on("zoom", (event) => {
-                        xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
-                        svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
+                        // xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
+                        // svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
                         const zoomState = event.transform;
                         setCurrentZoomState(zoomState);
                         // console.log(zoomState);
@@ -72,7 +73,7 @@ export default function ImgChart(  props  ) {
                         //           scale(${zoomState.k})
                         //           `;
                         svg.selectAll("rect")
-                            .transition().duration(10)
+                            .transition().duration(50)
                             .attr("transform", zoomState.toString())
                         // console.log(newScale);
                       });
@@ -107,14 +108,14 @@ export default function ImgChart(  props  ) {
   return (
     <HashtagChartContainer>
       <InputWrapper>
-        <label for="size"> SIZE </label>
+        {/* <label for="size"> SIZE </label>
         <Input 
           id="size" 
           type="number" 
           min="0" max="80" step="2" defaultValue="40" 
           value={ size }
           onChange= { e => setSize(e.target.value) }
-        />
+        /> */}
           
         <label for="opacity"> OPACITY </label>
         <Input 

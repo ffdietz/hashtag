@@ -6,7 +6,7 @@ export class Contact extends Component {
         return (
             <ContactContainer className="contact">
                 <ContactWrapper>
-                    <h3>Contact</h3>
+                    <h2>Contact</h2>
 
                     <InfoWrapper>
                         {/* <InfoTitle>Dirección</InfoTitle> */}
@@ -47,7 +47,7 @@ const ContactContainer = styled.div `
     color: var(--font-color);
     width: 100vw;
     height: 100vh;
-    font-size:1.7rem;
+    font-size:1.2rem;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -44,7 +44,7 @@ export class Hashtag extends Component {
                     this.state.init ?
                     <HashtagChart data={ this.state.gallery } />
                     :
-                    <div>loading...</div>
+                    <div></div>
                 }
             </>
         )
