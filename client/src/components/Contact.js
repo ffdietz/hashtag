@@ -7,6 +7,9 @@ export class Contact extends Component {
             <ContactContainer className="contact">
                 <ContactWrapper>
                     {/* <InfoWrapper> */}
+                        <ContactLink href="mailto: ultimaesperanza@gmail.com"> 
+                                    <i className="fas fa-envelope"/> 
+                                </ContactLink>
                         <ContactLink href="https://ultimaesperanza.org/"> 
                                     <i className="fas fa-globe"/> 
                                 </ContactLink>
@@ -55,7 +58,8 @@ const ContactLink = styled.a `
 
     i{
         color: grey;
-        font-size: 80px;
+        font-size: 65px;
         margin: 10px;
+        border-color: green;
     }
 `

@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import Home     from './Home.js';
+import ProjectDescription     from './ProjectDescription';
 import Collective  from './Collective'
 import Hashtag  from './Hashtag/Hashtag'
 import Contact  from './Contact'
@@ -22,10 +22,9 @@ export class Main extends Component {
                             >
                             < Switch location={ location } >
                                 <Route exact path= '/'  component={ Hashtag } />
-                                <Route exact path= '/hashtag'   component={ Hashtag } />
+                                <Route exact path= '/hashtag'   component={ ProjectDescription } />
                                 <Route exact path= '/collective'    component={ Collective } />
                                 <Route exact path= '/contact'   component={ Contact } />
-                                {/* <Route exact path= '/about-project' component={ AboutProject } /> */}
                             </Switch>
                         </CSSTransition>
                     </TransitionGroup>

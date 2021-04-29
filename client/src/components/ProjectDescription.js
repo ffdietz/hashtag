@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-export class Collective extends Component {
+export class AboutProject extends Component {
 
     paragraph(p) {
         return ( 
@@ -27,7 +27,8 @@ export class Collective extends Component {
     }
 }
 
-export default Collective
+export default AboutProject
+
 
 const AboutContainer = styled.div`
     width: 100vw;
@@ -60,17 +61,16 @@ const BiographyText = styled.p `
     height: 50vh;
     width: 50vh;
     margin: 0;
-    margin-top: -5vh;
+    margin-top: -12vh;
     padding: 0;
     text-align: justify;
     
     font-size:1.4rem;
-    line-height: 1.6;
+    line-height: 1.5;
 
     color: var(--font-color);
 
 `
 const Biography = 
-    `Ultimaesperanza es un colectivo artístico dirigido por Sandra Ulloa y Nataniel Alvarez que nace en  2004 interesado en explorar a través de distintos lenguajes artísticos y  medios tecnológicos (análogos y digitales), las particularidades de la ruralidad magallánica; del territorio sub-antártico y su relación con la memoria colectiva, historia e identidad local. 
-
-    El colectivo toma su nombre como un gesto de resistencia en alusión a la toponimia del lugar, intentando rescatar las denominaciones  de localidades como  Bahía Inútil, Ultima Esperanza, Bahía de la Desolación, Bahía Decepción, etc. que han condicionado la manera en que se observa el territorio que los rodea para ofrecer un cambio de signo a partir de proyectos artísticos interdisciplinarios.`
+    `¿Puede una obra de artes mediales servir como herramienta científica?, ¿puede un cúmulo de fotografías de carácter turístico entregar información del calentamiento global? ¿pueden nuestros recuerdos fotográficos aportar al conocimiento y comportamiento de masas de hielo milenario?. 
+    Con estas preguntas como punto de partida se genera la idea central de este proyecto denominado Hashtag Glaciar Grey, una base de datos que reflexiona sobre el calentamiento global. El presente proyecto toma como fuente o base, la información visual referente a las fotografías que los miles de turistas que transitan por el Parque Nacional Torres del Paine, realizan en torno al glaciar Grey. A través del motor de búsqueda #glaciargrey se construye esta obra que se alimenta de estos datos permitiendo de esta manera poder visualizar el comportamiento del Glaciar a modo de “Proxy” virtual. `
