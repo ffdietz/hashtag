@@ -11,33 +11,26 @@ export default function ImgChart(  props  ) {
   console.log(props);
 
   const [ APIelements ] = useState( props.data );
-  const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 100 );
+  const [ viewState, setViewState ] = useState(true);
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  const [ XScaleFaktor, setXScaleFaktor ] = useState(1);
-  const [ YScaleFaktor, setYScaleFaktor ] = useState(1);  
-  const [ viewState, setViewState ] = useState(false);
-  // const [ sorting, setSorting ] = useState("bytes")
 
-  function ImageDefsPattern () {
-      d3.select(svgRef.current)
-        .append("defs")
-        .selectAll(".image-pattern")
-        .data(APIelements)
-        .join("pattern")
-        .attr("id", (d) => { return d.asset_id })     //from api object response
-        .attr("height", "100%")
-        .attr("width", "100%")
-        .attr("patternContentUnits","objectBoundingBox")
-        .append("image")
-        .attr("height", 1)
-        .attr("width", 1)
-        .attr("preserveAspectRatio", "none")
-        .attr("href", (d) => { return d.url } )        //from api object response
-  }
+  
 
   useEffect(() => {
-    ImageDefsPattern();
+    d3.select(svgRef.current)
+    .append("defs")
+    .selectAll(".image-pattern")
+    .data(APIelements)
+    .join("pattern")
+    .attr("id", (d) => { return d.asset_id })     //from api object response
+    .attr("height", "100%")
+    .attr("width", "100%")
+    .attr("patternContentUnits","objectBoundingBox")
+    .append("image")
+    .attr("height", 1)
+    .attr("width", 1)
+    .attr("preserveAspectRatio", "none")
+    .attr("href", (d) => { return d.url } )        //from api object response
   }, [APIelements] );
 
   useEffect(() => {
@@ -45,8 +38,8 @@ export default function ImgChart(  props  ) {
     const margin = ({top: 60, bottom: 10, right: 30, left: 40})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    width = width *4;
-    height = height *3;
+    width = width * 4;
+    height = height * 3;
 
     const xScale =  d3.scaleBand()
                       .domain( APIelements.map((d) => d.bytes ))
@@ -63,11 +56,9 @@ export default function ImgChart(  props  ) {
                         [ 0, 0 ], 
                         [ width , height ] ])
                       .on("zoom", (event) => {
-                        // xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
-                        // svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
                         const zoomState = event.transform;
                         setCurrentZoomState(zoomState);
-                        // console.log(zoomState);
+                        console.log(zoomState);
                         // const newScale = `
                         //           translate(${ (zoomState.x)} , ${ (zoomState.y) } )
                         //           scale(${zoomState.k})
@@ -92,60 +83,18 @@ export default function ImgChart(  props  ) {
             return "red"
           })
 
-        // .transition().duration(500)
-        .style("opacity", opacity / 100)
-        // .transition().duration(500)
         .attr("width", 80 ).attr("height", 80 )
-        .transition().duration(1500)
+        .transition().duration(5000)
         .attr("x", (d) => xScale(d.bytes) - 80/2)
-        .transition().duration(1500)
+        .transition().duration(5000)
         .attr("y", (d) => yScale(d.bytes) - 80/2)
         
     svg.call(zoomed);
 
-}, [ dimensions, size, opacity, currentZoomState, XScaleFaktor, YScaleFaktor, viewState ]);
+}, [ dimensions, currentZoomState ]);
 
   return (
     <HashtagChartContainer>
-      <InputWrapper>
-        {/* <label for="size"> SIZE </label>
-        <Input 
-          id="size" 
-          type="number" 
-          min="0" max="80" step="2" defaultValue="40" 
-          value={ size }
-          onChange= { e => setSize(e.target.value) }
-        /> */}
-          
-        <label for="opacity"> OPACITY </label>
-        <Input 
-          id="opacity"
-          type="number"
-          min="5" max="100" step="5" defaultValue="60" 
-          value={ opacity }
-          onChange= { e => setOpacity(e.target.value) }
-        />
-
-        {/* <label for="XScale"> XScale </label>
-        <Input 
-          id="XScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ XScaleFaktor }
-          onChange= { e => setXScaleFaktor(e.target.value) }
-        />
-
-        <label for="YScale"> YScale </label>
-        <Input 
-          id="YScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ YScaleFaktor }
-          onChange= { e => setYScaleFaktor(e.target.value) }
-        /> */}
-
-      </InputWrapper>
-
       <CanvasContainer ref={wrapperRef} >
         <SVGCanvas ref={svgRef} />
       </CanvasContainer>
@@ -175,35 +124,6 @@ const SVGCanvas = styled.svg `
     height: 85vh;
     /* border: 1px solid orange; */
 `
-const InputWrapper = styled.div `
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
-`
-const Input = styled.input `
-  width: 50px;
-  height: 40px;
-  line-height: 1.65;
-  float: left;
-  display: block;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  padding-left: 15px;
-
-  background: black;
-  color: var(--font-color);
-  font-size: 1.3rem;  
-  font-family: 'Lato';
-  border: none;
-  /* border: 0.5px solid turquoise; */
-
-  &:focus {
-  border: 0.5px solid turquoise;
-  }
-}
-`
-
 //Description
   //scaleBand split the axis and add margins
   //it split the axis in a defined number of elements

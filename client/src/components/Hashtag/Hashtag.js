@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import HashtagChart from './HashtagChart'
 
-// Different draw schemas
-// D3 merged to React   http://t.ly/HOvE http://t.ly/b3w5
-// SVG canvas
-
 export class Hashtag extends Component {
 
     constructor(props) {
@@ -16,16 +12,6 @@ export class Hashtag extends Component {
             init: 0,
         }
     }
-
-    // async componentDidMount(){
-    //     const response = await axios.get(`http://localhost:5500/hashtag/${this.state.quantity}`)
-    //     .then(response => { return response })
-    //     .catch(error => console.log(error));
-    //     this.setState({ 
-    //         gallery: response.data.resources,
-    //         init:1
-    //     }) 
-    // }
 
     async componentDidMount(){
         const response = await axios.get(`http://localhost:5500/hashtag/resources`)

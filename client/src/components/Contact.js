@@ -6,34 +6,17 @@ export class Contact extends Component {
         return (
             <ContactContainer className="contact">
                 <ContactWrapper>
-                    <h2>Contact</h2>
-
-                    <InfoWrapper>
-                        {/* <InfoTitle>Dirección</InfoTitle> */}
-                        <InfoIcon className='fas fa-map-marker-alt'/>
-                        <InfoText>address</InfoText>
-                    </InfoWrapper>
-
-                    <InfoWrapper>
-                        {/* <InfoTitle>Telefono</InfoTitle> */}
-                        <InfoIcon className='fas fa-phone-alt'/>
-                        <InfoText>123456789</InfoText>
-                    </InfoWrapper>
-
-                    <InfoWrapper>
-                        {/* <InfoTitle>Email</InfoTitle> */}
-                        <InfoIcon className='fas fa-envelope'/>
-                        <InfoText>ultimaesperanza@gmail.com</InfoText>
-                    </InfoWrapper>
-
-            {/* <div className="contact-form">
-                <h3>Contact Form</h3>
-            </div> */}
-
-
-            {/* PAGINA OFICIAL */}
-
-            {/* FORMULARIO CONTACTO */}
+                    {/* <InfoWrapper> */}
+                        <ContactLink href="https://ultimaesperanza.org/"> 
+                                    <i className="fas fa-globe"/> 
+                                </ContactLink>
+                        <ContactLink href="https://www.facebook.com/colectivoultimaesperanza/"> 
+                                <i className="fab fa-facebook-square"/> 
+                            </ContactLink>
+                        <ContactLink href="https://www.instagram.com/colectivoultimaesperanza/"> 
+                                <i className="fab fa-instagram"/> 
+                            </ContactLink>
+                    {/* </InfoWrapper> */}
                 </ContactWrapper>
             </ContactContainer>
         )
@@ -51,41 +34,28 @@ const ContactContainer = styled.div `
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* border: 1px solid white; */
-
-    /*
-    border-radius: 10px;
-    padding:auto; */
 `
 
 const ContactWrapper = styled.div `
     width: 65vh;
     height: 50vh;
     margin-top: 10vh;
-    padding: 10px;
-
-    /* border: 1px solid green; */
-    /* border-radius: 20px; */
-    /* background: rgba(255,255,255,0.1); */
-`
-
-const InfoWrapper = styled.div`
     display: flex;
-    flex-direction: row;
     align-items: center;
-
+    justify-content: space-around;
 `
 
-// const InfoTitle = styled.h5`
+const ContactLink = styled.a `
+    color:grey;
+    text-decoration: none;
 
-// `
+    :hover{
+    color:black;
+    }
 
-const InfoIcon = styled.i`
-
+    i{
+        color: grey;
+        font-size: 80px;
+        margin: 10px;
+    }
 `
-
-const InfoText = styled.p `
-    margin-left: 15px;
-`
-

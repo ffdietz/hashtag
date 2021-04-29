@@ -21,7 +21,7 @@ export class Main extends Component {
                             classNames="fade"
                             >
                             < Switch location={ location } >
-                                <Route exact path= '/'  component={ Home } />
+                                <Route exact path= '/'  component={ Hashtag } />
                                 <Route exact path= '/hashtag'   component={ Hashtag } />
                                 <Route exact path= '/collective'    component={ Collective } />
                                 <Route exact path= '/contact'   component={ Contact } />
