@@ -8,19 +8,16 @@ export default function ImgChart(  props  ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
-  console.log(props);
 
-  const [ APIelements ] = useState( props.data );
+  const [ data ] = useState( props.data );
   const [ viewState, setViewState ] = useState(true);
   const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
-  
-
   useEffect(() => {
-    d3.select(svgRef.current)
+  d3.select(svgRef.current)
     .append("defs")
     .selectAll(".image-pattern")
-    .data(APIelements)
+    .data(data)
     .join("pattern")
     .attr("id", (d) => { return d.asset_id })     //from api object response
     .attr("height", "100%")
@@ -30,73 +27,68 @@ export default function ImgChart(  props  ) {
     .attr("height", 1)
     .attr("width", 1)
     .attr("preserveAspectRatio", "none")
-    .attr("href", (d) => { return d.url } )        //from api object response
-  }, [APIelements] );
+    .attr("href", (d) => { return d.url });        //from api object response
+  }, [data] );
 
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
+    const svg = d3.select(svgRef.current)
     const margin = ({top: 60, bottom: 10, right: 30, left: 40})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    width = width * 4;
-    height = height * 3;
+    const chartWidth  = width  * 4; 
+    const chartHeight = height * 4;
+
+    const initialZoom = d3.zoomIdentity.scale(0.2) ;
 
     const xScale =  d3.scaleBand()
-                      .domain( APIelements.map((d) => d.bytes ))
-                      .range([ margin.left, (width - margin.right)  ])
+                      .domain( data.map((d) => d.bytes ))
+                      .range([ margin.left, chartWidth - margin.right])
 
     const yScale =  d3.scaleLinear()
-                      .domain([ d3.min(APIelements, (d) => d.bytes), 
-                                d3.max(APIelements, (d) => d.bytes) ]) 
-                      .range([(height - margin.bottom) , margin.top]);
+                      .domain([ d3.min(data, (d) => d.bytes), 
+                                d3.max(data, (d) => d.bytes) ]) 
+                      .range([chartHeight, margin.bottom]);
     
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
-                      .translateExtent([
-                        [ 0, 0 ], 
-                        [ width , height ] ])
+                      .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
-                        const zoomState = event.transform;
-                        setCurrentZoomState(zoomState);
-                        console.log(zoomState);
-                        // const newScale = `
-                        //           translate(${ (zoomState.x)} , ${ (zoomState.y) } )
-                        //           scale(${zoomState.k})
-                        //           `;
-                        svg.selectAll("rect")
-                            .transition().duration(50)
-                            .attr("transform", zoomState.toString())
-                        // console.log(newScale);
+                      svg
+                        .selectAll("rect")
+                        .transition().duration(100)
+                        .attr("transform", event.transform.toString())
                       });
+    svg
+      .selectAll("rect")
+      .attr("transform", initialZoom);
 
     svg
-      .selectAll(".node")
-      .data(APIelements)
+      .selectAll("rect")
+      .data(data)
       .join("rect")
-        .attr("class", "node")
-        .attr("fill", (d) => {
-          if(viewState) return "none" 
-          return `url( #${d.asset_id} )` 
-          })  //id name of pattern
-          .attr("stroke", () => {
-            if(!viewState) return "none" 
-            return "red"
-          })
+      .attr("class", "node")
+      .attr("fill", (d) => {
+        if(!viewState) return "none" 
+        else return `url( #${d.asset_id} )` 
+      })  //id name of pattern
+      .attr("stroke", () => {
+        if(viewState) return "none" 
+        else return "red"
+      })
+      .attr("width", 80 ).attr("height", 80 )
+      .transition().duration(5000)
+      .attr("x", (d) => xScale(d.bytes) - 80/2)
+      .transition().duration(5000)
+      .attr("y", (d) => yScale(d.bytes) - 80/2);
 
-        .attr("width", 80 ).attr("height", 80 )
-        .transition().duration(5000)
-        .attr("x", (d) => xScale(d.bytes) - 80/2)
-        .transition().duration(5000)
-        .attr("y", (d) => yScale(d.bytes) - 80/2)
-        
-    svg.call(zoomed);
+    svg.call(zoomed)
 
-}, [ dimensions, currentZoomState ]);
+}, [ dimensions ]);
 
   return (
     <HashtagChartContainer>
       <CanvasContainer ref={wrapperRef} >
-        <SVGCanvas ref={svgRef} />
+        <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
     </HashtagChartContainer>
   );
@@ -117,12 +109,12 @@ const CanvasContainer = styled.div `
   height: 85vh;
   margin: auto;
   margin-top:10vh;
-  /* border: 1px solid blue; */
+  border: 1px solid blue;
 `
 const SVGCanvas = styled.svg `
     width: 95vw;
     height: 85vh;
-    /* border: 1px solid orange; */
+    border: 1px solid orange;
 `
 //Description
   //scaleBand split the axis and add margins
