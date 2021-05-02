@@ -32,22 +32,23 @@ export default function ImgChart(  props  ) {
 
   useEffect(() => {
     const svg = d3.select(svgRef.current)
-    const margin = ({top: 60, bottom: 10, right: 30, left: 40})
+    const margin = ({top: 10, bottom: 60, right: 40, left: 40})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
     const chartWidth  = width  * 4; 
-    const chartHeight = height * 4;
+    const chartHeight = height * 3;
+    const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.2) ;
+    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth) / 2 , ( chartHeight)/2) ;
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left, chartWidth - margin.right])
+                      .range([ margin.left + rectSize, chartWidth - margin.right - rectSize])
 
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(data, (d) => d.bytes), 
                                 d3.max(data, (d) => d.bytes) ]) 
-                      .range([chartHeight, margin.bottom]);
+                      .range([margin.top + rectSize , chartHeight - margin.bottom - rectSize]);
     
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
@@ -75,11 +76,11 @@ export default function ImgChart(  props  ) {
         if(viewState) return "none" 
         else return "red"
       })
-      .attr("width", 80 ).attr("height", 80 )
+      .attr("width", rectSize ).attr("height", rectSize )
       .transition().duration(5000)
-      .attr("x", (d) => xScale(d.bytes) - 80/2)
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
       .transition().duration(5000)
-      .attr("y", (d) => yScale(d.bytes) - 80/2);
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2);
 
     svg.call(zoomed)
 
@@ -107,14 +108,16 @@ const HashtagChartContainer = styled.div `
 const CanvasContainer = styled.div `
   width: 95vw;
   height: 85vh;
-  margin: auto;
-  margin-top:10vh;
-  border: 1px solid blue;
+  display: flex;
+  margin-top:12vh;
+  justify-content: center;
+  /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
-    width: 95vw;
-    height: 85vh;
-    border: 1px solid orange;
+    width: 90vw;
+    height: 80vh;
+  /* justify-content: center; */
+    /* border: 1px solid orange; */
 `
 //Description
   //scaleBand split the axis and add margins
