@@ -48,7 +48,7 @@ export default function ImgChart(  props  ) {
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(data, (d) => d.bytes), 
                                 d3.max(data, (d) => d.bytes) ]) 
-                      .range([margin.top + rectSize , chartHeight - margin.bottom - rectSize]);
+                      .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
     
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
@@ -56,7 +56,7 @@ export default function ImgChart(  props  ) {
                       .on("zoom", (event) => {
                       svg
                         .selectAll("rect")
-                        .transition().duration(100)
+                        .transition().duration(10)
                         .attr("transform", event.transform.toString())
                       });
     svg
@@ -107,15 +107,14 @@ const HashtagChartContainer = styled.div `
 `
 const CanvasContainer = styled.div `
   width: 95vw;
-  height: 85vh;
+  height: 90vh;
   display: flex;
-  margin-top:12vh;
   justify-content: center;
   /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
     width: 90vw;
-    height: 80vh;
+    height: 90vh;
   /* justify-content: center; */
     /* border: 1px solid orange; */
 `

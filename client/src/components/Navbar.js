@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-import { NavLink } from "react-router-dom";
+import { NavLink, Route } from "react-router-dom";
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 const NavBar = () => {
-    const [isActive, setActive] = useState(true);
+    const [isActive, setActive] = useState(false);
 
     return (
+
         <NavBarContainer>
-            
             <NavWrapper>
                 <NavLogo to="/"> Colectivo<br/>UltimaEsperanza </NavLogo>
 
-                <NavMenu className={ isActive ? 'nav-menu active' : 'nav-menu' }>
-                    <li> <NavLinkItem 
-                            exact path to="/" > home </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/hashtag" > hashtag </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/collective" > colectivo </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/contact" > contact </NavLinkItem> </li>
+                <NavMenu className={ isActive ? 'nav-menu active' : 'nav-menu close' }>
+                    <li> <NavLinkItem exact path to="/" > home </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/hashtag" > hashtag </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/collective" > colectivo </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/contact" > contact </NavLinkItem> </li>
                 </NavMenu>
 
-                <NavIcon 
-                    className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
+                <NavIcon className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
                     onClick={ ()=> { setActive( !isActive ) } }
                 />
             </NavWrapper>
@@ -40,13 +36,11 @@ const NavBarContainer = styled.nav `
     position: fixed;
 
     color: var(--font-color);
-    //background: ${ (isActive)  =>  (isActive? "#222" : 'transparent') };
     background: transparent;
 
     display: flex;
     align-items: center;
     justify-content:center;
-
 `
 
 const NavWrapper = styled.div`
@@ -71,11 +65,14 @@ const NavLogo = styled(NavLink) `
 `
 
 const NavMenu = styled.ul `
-    display: none;
-    transition: top 5s opacity 1s;
+
+    &.close{
+    overflow: hidden;
     background: transparent;
     opacity: 0;
-    top: -100%;
+    top: -100%;    
+    transition: all 5s opacity 10s;
+    }
 
     &.active{
     list-style: none;
@@ -83,9 +80,10 @@ const NavMenu = styled.ul `
     align-items: center;
     margin-left: auto;
     opacity: 1;
-    transition: top 5s opacity 1s;
+    transition: all 5s opacity 10s;
     top: 0;
     }
+
 `
 
 const NavLinkItem = styled(NavLink)`

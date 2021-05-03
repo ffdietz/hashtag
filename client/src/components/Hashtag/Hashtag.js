@@ -8,7 +8,7 @@ export class Hashtag extends Component {
         super(props);
         this.state = {
             gallery: [],
-            quantity: 10,
+            quantity: 1,
             init: 0,
         }
     }
