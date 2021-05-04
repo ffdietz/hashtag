@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
-import {zoom as zoomBehavior} from 'd3';
 
 export default function ImgChart(  props  ) {
 
@@ -11,7 +10,7 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(false);
+  const [ viewState, setViewState ] = useState(true);
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -34,20 +33,24 @@ export default function ImgChart(  props  ) {
 
   useEffect(() => {
     const svg = d3.select(svgRef.current)
-    const margin = ({top: 10, bottom: 60, right: 40, left: 40})
+    const margin = ({top: 10, bottom: 60, right: 40, left: 20})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
     const chartWidth  = width  * 4; 
     const chartHeight = height * 3;
     const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth) / 2 , ( height )/2) ;
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth) / 2 , height *1 ) ;
 
+    d3.zoom()
+      .translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom()
+      .scaleTo(svg, initialZoom.k);
     // const rectGroup = ;
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left + rectSize, chartWidth - margin.right - rectSize])
+                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
 
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(data, (d) => d.bytes), 
@@ -84,19 +87,14 @@ export default function ImgChart(  props  ) {
         else return "red"
       })
       .attr("width", rectSize ).attr("height", rectSize )
-      // .transition().duration(5000)
+      .transition().duration(5000)
       .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      // .transition().duration(5000)
+      .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2);
 
     svg
       .selectAll("rect")
       .attr("transform", initialZoom);
-
-    d3.zoom()
-      .translateTo(svg, initialZoom.x, initialZoom.y);
-    d3.zoom()
-      .scaleTo(svg, initialZoom.k);
 
     svg.call(zoomed)
 
@@ -119,21 +117,22 @@ const HashtagChartContainer = styled.div `
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--font-color);
+  color: var(--font-color);  
+  border: 1px solid blue;
 `
 const CanvasContainer = styled.div `
-  width: 95vw;
+  width: 98vw;
   height: 90vh;
   display: flex;
+  margin-top: 4vh;
   justify-content: center;
-  /* border: 1px solid blue; */
+  border: 1px solid blue;
 `
 const SVGCanvas = styled.svg `
-    width: 90vw;
-    height: 90vh;
-    transform-origin: center;
+  width: 98vw;
+  height: 90vh;
   /* justify-content: center; */
-    /* border: 1px solid orange; */
+    border: 1px solid orange;
 `
 //Description
   //scaleBand split the axis and add margins
