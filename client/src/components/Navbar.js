@@ -6,24 +6,19 @@ const NavBar = () => {
     const [isActive, setActive] = useState(true);
 
     return (
+
         <NavBarContainer>
-            
             <NavWrapper>
                 <NavLogo to="/"> Colectivo<br/>UltimaEsperanza </NavLogo>
 
-                <NavMenu className={ isActive ? 'nav-menu active' : 'nav-menu' }>
-                    <li> <NavLinkItem 
-                            exact path to="/" > home </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/hashtag" > hashtag </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/collective" > colectivo </NavLinkItem> </li>
-                    <li> <NavLinkItem 
-                            exact path to="/contact" > contact </NavLinkItem> </li>
+                <NavMenu className={ isActive ? 'nav-menu close' : 'nav-menu' }>
+                    <li> <NavLinkItem exact path to="/" > home </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/hashtag" > hashtag </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/collective" > colectivo </NavLinkItem> </li>
+                    <li> <NavLinkItem exact path to="/contact" > contact </NavLinkItem> </li>
                 </NavMenu>
 
-                <NavIcon 
-                    className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
+                <NavIcon className={ isActive ? 'fas fa-bars active' : 'fas fa-times'}
                     onClick={ ()=> { setActive( !isActive ) } }
                 />
             </NavWrapper>
@@ -40,19 +35,17 @@ const NavBarContainer = styled.nav `
     position: fixed;
 
     color: var(--font-color);
-    //background: ${ (isActive)  =>  (isActive? "#222" : 'transparent') };
     background: transparent;
 
     display: flex;
     align-items: center;
     justify-content:center;
-
 `
 
 const NavWrapper = styled.div`
     width: 93vw;
     height: 6vh;
-    margin-top: 3vh;
+    margin-top: 2vh;
     display: flex;
     flex-flow: row;
     justify-content: space-between;
@@ -71,20 +64,19 @@ const NavLogo = styled(NavLink) `
 `
 
 const NavMenu = styled.ul `
-    display: none;
-    transition: top 5s opacity 1s;
-    opacity: 0;
-    top: -100%;
-
-    &.active{
     list-style: none;
     display: flex;
     align-items: center;
     margin-left: auto;
+    background: transparent;
     opacity: 1;
-    transition: top 5s opacity 1s;
-    top: 0;
+    transition: opacity 1s;
+
+    &.close{
+        opacity: 0;
+        /* overflow: hidden; */
     }
+
 `
 
 const NavLinkItem = styled(NavLink)`
@@ -110,7 +102,7 @@ const NavIcon = styled.i`
     font-size: 1.5rem;
     cursor: pointer;
     transition: opacity 1s linear;
-    opacity: 0.3;
+    opacity: 0.5;
 
     &.active{
         transition: opacity 1s;

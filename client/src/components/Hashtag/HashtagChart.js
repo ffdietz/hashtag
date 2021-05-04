@@ -15,15 +15,12 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 60 );
-  const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  // const [ sorting, setSorting ] = useState("bytes")
-
-  // const zoomInit = d3.zoomIdentity.scale(0.1);
+  const [ viewState, setViewState ] = useState(true);
+  // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
-    d3.select(svgRef.current)
+    d3
+      .select(svgRef.current)
       .append("defs")
       .selectAll(".image-pattern")
       .data(data)
@@ -35,52 +32,50 @@ export default function ImgChart(  props  ) {
       .append("image")
       .attr("height", 1)
       .attr("width", 1)
-      .attr("preserveAspectRatio", "none")
-      .attr("href", (d) => { return d.url })        //from api object response
-  }, [ data ] );
+      .attr("preserveAspectRatio", "xMidYMid")       // slice or meet
+      .attr("href", (d) => { return d.url });        //from api object response
+  }, [data] );
 
-  useEffect(() => {    
+  useEffect(() => {
     const svg = d3.select(svgRef.current)
+    const margin = ({top: 10, bottom: 60, right: 40, left: 20})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
-    const margin = ({top: 60, bottom: 10, right: 30, left: 40});
 
-    // width   = width   * 4;
-    // height  = height  * 3;
-    
-                  // .attr("viewBox", [-width / 2, -height / 2, width, height])
+    const chartWidth  = width  * 4; 
+    const chartHeight = height * 3;
+    const rectSize = 80;
 
-    // const minDate = d3.min(data, (d) => getDate(d.ig_uploaded_at));
-    // const maxDate = d3.max(data, (d) => getDate(d.ig_uploaded_at));
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth) / 2 , height *1 ) ;
 
-    // const xScale =  d3.scaleTime()
-    //                   .domain([ minDate, maxDate ]) 
-    //                   .range([margin.left, width - margin.right]);
-
-    // const yScale =  d3.scaleLinear()
-    //                   .domain([ 0, 
-    //                             d3.max(data, (d) => d.bytes) ]) 
-    //                   .range([(margin.top, height - margin.bottom)]);
+    d3.zoom()
+      .translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom()
+      .scaleTo(svg, initialZoom.k);
+    // const rectGroup = ;
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left, width - margin.right ])
+                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
 
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(data, (d) => d.bytes), 
                                 d3.max(data, (d) => d.bytes) ]) 
-                      .range([height - margin.top, margin.bottom]);
-
+                      .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+    
     const zoomed =  d3.zoom()
-                      .scaleExtent([0.1, 10])
-                      .translateExtent([
-                        [ 0, 0 ], 
-                        [ width , height ] ])
+                      .scaleExtent([0.1, 15])
+                      .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
-                        setCurrentZoomState(event.transform);
-                        svg
-                          // .selectAll("rect")
-                          // .transition().duration(100)
-                          .attr("transform", currentZoomState.toString())
+                        // console.log(event);
+                      svg
+                        .selectAll("rect")
+                        .transition().duration(10)
+                        .attr("transform", event.transform.toString()
+                          // `
+                          // translate(${event.transform.x } , ${event.transform.y }) 
+                          // scale(${event.transform.k})
+                          // `
+                        )
                       });
   // function clicked(event, [x, y]) {
   //   event.stopPropagation();
@@ -92,68 +87,36 @@ export default function ImgChart(  props  ) {
   // }
 
     svg
-      .selectAll(".node")
+      .selectAll("rect")
       .data(data)
       .join("rect")
-      .attr('class', 'rect')
-      .attr("fill", (d) => { return "url(#" + d.asset_id +")" })  //id name of pattern
-      // .transition().duration(500)
-      .attr("opacity", opacity / 100)
-      // .transition().duration(500)
-      .attr("width", 80 ).attr("height", 80 )
-      // .transition().duration(1500)
-      // .attr("x", (d) => xScale(getDate(d.ig_uploaded_at)) )
-      .attr("x", (d) => xScale(d.bytes) )
-      // .transition().duration(1500)
-      .attr("y", (d) => yScale(d.bytes) )
-      
-    svg.call(zoomed);
+      .attr("class", "node")
+      .attr("fill", (d) => {
+        if(!viewState) return "none" 
+        else return `url( #${d.asset_id} )` 
+      })  //id name of pattern
+      .attr("stroke", () => {
+        if(viewState) return "none" 
+        else return "red"
+      })
+      .attr("width", rectSize ).attr("height", rectSize )
+      .transition().duration(5000)
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
+      .transition().duration(5000)
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2);
 
-}, [ dimensions, size, opacity, currentZoomState]);
+    svg
+      .selectAll("rect")
+      .attr("transform", initialZoom);
+
+    svg.call(zoomed)
+
+}, [ dimensions, data, viewState ]);
 
   return (
     <HashtagChartContainer>
-      <InputWrapper>
-        {/* <label for="size"> SIZE </label>
-        <Input 
-          id="size" 
-          type="number" 
-          min="0" max="80" step="2" defaultValue="40" 
-          value={ size }
-          onChange= { e => setSize(e.target.value) }
-        />
-          
-        <label for="opacity"> OPACITY </label>
-        <Input 
-          id="opacity"
-          type="number"
-          min="5" max="100" step="5" defaultValue="60" 
-          value={ opacity }
-          onChange= { e => setOpacity(e.target.value) }
-        /> */}
-
-        {/* <label for="XScale"> XScale </label>
-        <Input 
-          id="XScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ XScaleFaktor }
-          onChange= { e => setXScaleFaktor(e.target.value) }
-        />
-
-        <label for="YScale"> YScale </label>
-        <Input 
-          id="YScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ YScaleFaktor }
-          onChange= { e => setYScaleFaktor(e.target.value) }
-        /> */}
-
-      </InputWrapper>
-
       <CanvasContainer ref={wrapperRef} >
-        <SVGCanvas ref={svgRef} />
+        <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
     </HashtagChartContainer>
   );
@@ -167,46 +130,23 @@ const HashtagChartContainer = styled.div `
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--font-color);
+  color: var(--font-color);  
+  /* border: 1px solid blue; */
 `
 const CanvasContainer = styled.div `
-  width: 95vw;
-  height: 85vh;
-  margin: auto;
-  margin-top:10vh;
+  width: 98vw;
+  height: 90vh;
+  display: flex;
+  margin-top: 4vh;
+  justify-content: center;
   /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
-    width: 95vw;
-    height: 85vh;
-    cursor: crosshair;
+  width: 98vw;
+  height: 90vh;
+  /* justify-content: center; */
     /* border: 1px solid orange; */
 `
-const InputWrapper = styled.div `
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
-`
-const Input = styled.input `
-  width: 50px;
-  height: 40px;
-  line-height: 1.65;
-  float: left;
-  display: block;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  padding-left: 15px;
-
-  background: black;
-  color: var(--font-color);
-  font-size: 1.3rem;  
-  font-family: 'Lato';
-  border: none;
-  /* border: 0.5px solid turquoise; */
-}
-`
-
 //Description
   //scaleBand split the axis and add margins
   //it split the axis in a defined number of elements

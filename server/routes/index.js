@@ -9,16 +9,15 @@ router.get('/', (req, res, next) => {
   // res.render('index');
 });
 
-// Call the cloudinary api 
-// router.get('/hashtag/reduced', async (req, res) => {
-//   const images = await cloudinary.api.resources(
-//       {
-//       resource_type: 'image',
-//       max_results: 500
-//       },
-//     );
-//   return res.json(images) //res.json( images );
-//   });
+// Call the cloudinary api
+router.get('/api', async (req, res) => {
+  const images = await cloudinary.api.resources(
+      {
+      folder: 'Hashtag',
+      },
+    );
+  return res.json( images );
+  });
 
 
 router.get('/hashtag/:quantity', async (req, res) => {
@@ -76,6 +75,44 @@ router.get("/hashtag", async (req, res) => {
     const results = [];
     await list_resources(results);
     return res.json(results);
+});
+
+  router.get('/hashtag/resources', async (req, res) => {
+    async function list_resources(results, next_cursor = null) {
+      await new Promise((resolve) => {
+          cloudinary.api.resources(
+              {
+                  resource_type: "image",
+                  max_results: 500,
+                  next_cursor: next_cursor,
+              },
+              function (err, res) {
+                  if (err) {
+                      console.log(err);
+                      resolve();
+                      
+                  } else {
+                      res.resources.forEach(function (resource) {
+                          results.push(resource);
+                      });
+
+                      if (res.next_cursor) {
+                          list_resources(results, res.next_cursor)
+                          .then(() => resolve());
+                      } else {
+                          resolve();
+                      }
+                  }
+                  
+              }
+          );
+      });
+  }
+
+  const results = [];
+  await list_resources(results);
+  console.log(results[0]);
+  return res.status(200).json(results);
 });
 
 module.exports = router;

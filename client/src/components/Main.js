@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import Home     from './Home.js';
+import ProjectDescription     from './ProjectDescription';
 import Collective  from './Collective'
 import Hashtag  from './Hashtag/Hashtag'
 import Contact  from './Contact'
@@ -17,15 +17,14 @@ export class Main extends Component {
                     <TransitionGroup>
                         <CSSTransition
                             key={ location.key }
-                            timeout={ 800 }
+                            timeout={ 1000 }
                             classNames="fade"
                             >
                             < Switch location={ location } >
-                                <Route exact path= '/'  component={ Home } />
-                                <Route exact path= '/hashtag'   component={ Hashtag } />
+                                <Route exact path= '/'  component={ Hashtag } />
+                                <Route exact path= '/hashtag'   component={ ProjectDescription } />
                                 <Route exact path= '/collective'    component={ Collective } />
                                 <Route exact path= '/contact'   component={ Contact } />
-                                {/* <Route exact path= '/about-project' component={ AboutProject } /> */}
                             </Switch>
                         </CSSTransition>
                     </TransitionGroup>
@@ -43,7 +42,6 @@ const MainContainer = styled.div `
     left: 0;
     right: 0;
     overflow: hidden;
-
     .fade-appear,
     .fade-enter {
         opacity: 0;
@@ -54,14 +52,11 @@ const MainContainer = styled.div `
         opacity: 1;
         transition: opacity 600ms linear 500ms;
     }
-
     .fade-exit {
         opacity: 1;
     }
-
     .fade-exit.fade-exit-active {
         opacity: 0;
         transition: opacity 400ms linear;
     }
-
 `
