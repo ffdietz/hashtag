@@ -6,8 +6,10 @@ export class Contact extends Component {
         return (
             <ContactContainer className="contact">
                 <ContactWrapper>
-                    {/* <InfoWrapper> */}
-                        <ContactLink href="mailto: ultimaesperanza@gmail.com"> 
+                        <ContactLink href="mailto: ultimaesperanza@gmail.com"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText("ultimaesperanza@gmail.com")}}
+                                    > 
                                     <i className="fas fa-envelope"/> 
                                 </ContactLink>
                         <ContactLink href="https://ultimaesperanza.org/"> 
@@ -19,7 +21,6 @@ export class Contact extends Component {
                         <ContactLink href="https://www.instagram.com/colectivoultimaesperanza/"> 
                                 <i className="fab fa-instagram"/> 
                             </ContactLink>
-                    {/* </InfoWrapper> */}
                 </ContactWrapper>
             </ContactContainer>
         )
@@ -49,17 +50,12 @@ const ContactWrapper = styled.div `
 `
 
 const ContactLink = styled.a `
-    color:grey;
+    color: var(--font-color);
     text-decoration: none;
-
-    :hover{
-    color:black;
-    }
 
     i{
         color: grey;
-        font-size: 65px;
+        font-size: 70px;
         margin: 10px;
-        border-color: green;
     }
 `

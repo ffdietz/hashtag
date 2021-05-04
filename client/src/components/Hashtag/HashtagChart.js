@@ -26,7 +26,7 @@ export default function ImgChart(  props  ) {
     .append("image")
     .attr("height", 1)
     .attr("width", 1)
-    .attr("preserveAspectRatio", "none")
+    .attr("preserveAspectRatio", "xMidYMid")      // slice or meet
     .attr("href", (d) => { return d.url });        //from api object response
   }, [data] );
 

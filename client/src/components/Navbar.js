@@ -19,10 +19,7 @@ const NavBar = () => {
                 </NavMenu>
 
                 <NavIcon className={ isActive ? 'fas fa-bars active' : 'fas fa-times'}
-                    onClick={ ()=> { 
-                        setActive( !isActive ) 
-                        console.log(isActive);
-                    } }
+                    onClick={ ()=> { setActive( !isActive ) } }
                 />
             </NavWrapper>
 
@@ -48,7 +45,7 @@ const NavBarContainer = styled.nav `
 const NavWrapper = styled.div`
     width: 93vw;
     height: 6vh;
-    margin-top: 3vh;
+    margin-top: 2vh;
     display: flex;
     flex-flow: row;
     justify-content: space-between;
@@ -71,14 +68,13 @@ const NavMenu = styled.ul `
     display: flex;
     align-items: center;
     margin-left: auto;
+    background: transparent;
     opacity: 1;
     transition: opacity 1s;
-    top: 0;
-    background: transparent;
 
     &.close{
         opacity: 0;
-        overflow: hidden;
+        /* overflow: hidden; */
     }
 
 `
@@ -106,7 +102,7 @@ const NavIcon = styled.i`
     font-size: 1.5rem;
     cursor: pointer;
     transition: opacity 1s linear;
-    opacity: 0.3;
+    opacity: 0.5;
 
     &.active{
         transition: opacity 1s;

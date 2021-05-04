@@ -17,7 +17,7 @@ export class Main extends Component {
                     <TransitionGroup>
                         <CSSTransition
                             key={ location.key }
-                            timeout={ 800 }
+                            timeout={ 1000 }
                             classNames="fade"
                             >
                             < Switch location={ location } >
