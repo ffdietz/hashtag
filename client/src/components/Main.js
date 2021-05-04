@@ -42,4 +42,21 @@ const MainContainer = styled.div `
     left: 0;
     right: 0;
     overflow: hidden;
+    .fade-appear,
+    .fade-enter {
+        opacity: 0;
+        z-index: 1;
+    }
+    .fade-appear-active,
+    .fade-enter.fade-enter-active {
+        opacity: 1;
+        transition: opacity 600ms linear 500ms;
+    }
+    .fade-exit {
+        opacity: 1;
+    }
+    .fade-exit.fade-exit-active {
+        opacity: 0;
+        transition: opacity 400ms linear;
+    }
 `

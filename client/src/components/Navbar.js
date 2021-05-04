@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-import { NavLink, Route } from "react-router-dom";
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-    const [isActive, setActive] = useState(false);
+    const [isActive, setActive] = useState(true);
 
     return (
 
@@ -12,15 +11,18 @@ const NavBar = () => {
             <NavWrapper>
                 <NavLogo to="/"> Colectivo<br/>UltimaEsperanza </NavLogo>
 
-                <NavMenu className={ isActive ? 'nav-menu active' : 'nav-menu close' }>
+                <NavMenu className={ isActive ? 'nav-menu close' : 'nav-menu' }>
                     <li> <NavLinkItem exact path to="/" > home </NavLinkItem> </li>
                     <li> <NavLinkItem exact path to="/hashtag" > hashtag </NavLinkItem> </li>
                     <li> <NavLinkItem exact path to="/collective" > colectivo </NavLinkItem> </li>
                     <li> <NavLinkItem exact path to="/contact" > contact </NavLinkItem> </li>
                 </NavMenu>
 
-                <NavIcon className={ isActive ? 'fas fa-times' : 'fas fa-bars active'}
-                    onClick={ ()=> { setActive( !isActive ) } }
+                <NavIcon className={ isActive ? 'fas fa-bars active' : 'fas fa-times'}
+                    onClick={ ()=> { 
+                        setActive( !isActive ) 
+                        console.log(isActive);
+                    } }
                 />
             </NavWrapper>
 
@@ -65,23 +67,18 @@ const NavLogo = styled(NavLink) `
 `
 
 const NavMenu = styled.ul `
-
-    &.close{
-    overflow: hidden;
-    background: transparent;
-    opacity: 0;
-    top: -100%;    
-    transition: all 5s opacity 10s;
-    }
-
-    &.active{
     list-style: none;
     display: flex;
     align-items: center;
     margin-left: auto;
     opacity: 1;
-    transition: all 5s opacity 10s;
+    transition: opacity 1s;
     top: 0;
+    background: transparent;
+
+    &.close{
+        opacity: 0;
+        overflow: hidden;
     }
 
 `
