@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
+import {zoom as zoomBehavior} from 'd3';
 
 export default function ImgChart(  props  ) {
 
@@ -10,24 +11,25 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(true);
-  const [ currentZoomState, setCurrentZoomState ] = useState(1);
+  const [ viewState, setViewState ] = useState(false);
+  // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
-  d3.select(svgRef.current)
-    .append("defs")
-    .selectAll(".image-pattern")
-    .data(data)
-    .join("pattern")
-    .attr("id", (d) => { return d.asset_id })     //from api object response
-    .attr("height", "100%")
-    .attr("width", "100%")
-    .attr("patternContentUnits","objectBoundingBox")
-    .append("image")
-    .attr("height", 1)
-    .attr("width", 1)
-    .attr("preserveAspectRatio", "xMidYMid")      // slice or meet
-    .attr("href", (d) => { return d.url });        //from api object response
+    d3
+      .select(svgRef.current)
+      .append("defs")
+      .selectAll(".image-pattern")
+      .data(data)
+      .join("pattern")
+      .attr("id", (d) => { return d.asset_id })     //from api object response
+      .attr("height", "100%")
+      .attr("width", "100%")
+      .attr("patternContentUnits","objectBoundingBox")
+      .append("image")
+      .attr("height", 1)
+      .attr("width", 1)
+      .attr("preserveAspectRatio", "xMidYMid")       // slice or meet
+      .attr("href", (d) => { return d.url });        //from api object response
   }, [data] );
 
   useEffect(() => {
@@ -39,7 +41,9 @@ export default function ImgChart(  props  ) {
     const chartHeight = height * 3;
     const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth) / 2 , ( chartHeight)/2) ;
+    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth) / 2 , ( height )/2) ;
+
+    // const rectGroup = ;
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
@@ -54,14 +58,17 @@ export default function ImgChart(  props  ) {
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
+                        // console.log(event);
                       svg
                         .selectAll("rect")
                         .transition().duration(10)
-                        .attr("transform", event.transform.toString())
+                        .attr("transform", event.transform.toString()
+                          // `
+                          // translate(${event.transform.x } , ${event.transform.y }) 
+                          // scale(${event.transform.k})
+                          // `
+                        )
                       });
-    svg
-      .selectAll("rect")
-      .attr("transform", initialZoom);
 
     svg
       .selectAll("rect")
@@ -77,14 +84,23 @@ export default function ImgChart(  props  ) {
         else return "red"
       })
       .attr("width", rectSize ).attr("height", rectSize )
-      .transition().duration(5000)
+      // .transition().duration(5000)
       .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      .transition().duration(5000)
+      // .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2);
+
+    svg
+      .selectAll("rect")
+      .attr("transform", initialZoom);
+
+    d3.zoom()
+      .translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom()
+      .scaleTo(svg, initialZoom.k);
 
     svg.call(zoomed)
 
-}, [ dimensions ]);
+}, [ dimensions, data, viewState ]);
 
   return (
     <HashtagChartContainer>
@@ -115,6 +131,7 @@ const CanvasContainer = styled.div `
 const SVGCanvas = styled.svg `
     width: 90vw;
     height: 90vh;
+    transform-origin: center;
   /* justify-content: center; */
     /* border: 1px solid orange; */
 `

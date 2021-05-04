@@ -60,7 +60,8 @@ router.get('/api/:quantity', async (req, res) => {
                       });
 
                       if (res.next_cursor) {
-                          list_resources(results, res.next_cursor).then(() => resolve());
+                          list_resources(results, res.next_cursor)
+                          .then(() => resolve());
                       } else {
                           resolve();
                       }
@@ -73,7 +74,7 @@ router.get('/api/:quantity', async (req, res) => {
 
   const results = [];
   await list_resources(results);
-  console.log(results);
+  console.log(results[0]);
   return res.status(200).json(results);
 });
 
