@@ -118,7 +118,7 @@ const HashtagChartContainer = styled.div `
   justify-content: center;
   align-items: center;
   color: var(--font-color);  
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
 `
 const CanvasContainer = styled.div `
   width: 98vw;
@@ -126,13 +126,13 @@ const CanvasContainer = styled.div `
   display: flex;
   margin-top: 4vh;
   justify-content: center;
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
   width: 98vw;
   height: 90vh;
   /* justify-content: center; */
-    border: 1px solid orange;
+    /* border: 1px solid orange; */
 `
 //Description
   //scaleBand split the axis and add margins
