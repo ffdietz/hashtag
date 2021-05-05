@@ -19,8 +19,7 @@ router.get('/api', async (req, res) => {
   return res.json( images );
   });
 
-
-router.get('/hashtag/:quantity', async (req, res) => {
+router.get('/api/:quantity', async (req, res) => {
   const images = await cloudinary.api.resources({
       // type: 'upload',
       resource_type: 'image',
@@ -93,7 +92,8 @@ router.get("/hashtag", async (req, res) => {
                       
                   } else {
                       res.resources.forEach(function (resource) {
-                          results.push(resource);
+                        resource.ig_uploaded_at = resource.public_id.slice(0,19);
+                        results.push(resource);
                       });
 
                       if (res.next_cursor) {

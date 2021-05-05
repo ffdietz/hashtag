@@ -3,13 +3,12 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-// const getDate = dateString => {
-//   const date = dateString.split(/[-_.]/);
-//   return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
-// };
+const getDate = dateString => {
+  const date = dateString.split(/[-_.]/);
+  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+};
 
 export default function ImgChart(  props  ) {
-
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);  
@@ -45,13 +44,11 @@ export default function ImgChart(  props  ) {
     const chartHeight = height * 3;
     const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth) / 2 , height *1 ) ;
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
+    d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom().scaleTo(svg, initialZoom.k);
 
-    d3.zoom()
-      .translateTo(svg, initialZoom.x, initialZoom.y);
-    d3.zoom()
-      .scaleTo(svg, initialZoom.k);
-    // const rectGroup = ;
+    console.log(getDate(data[10].ig_uploaded_at))
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
@@ -62,20 +59,23 @@ export default function ImgChart(  props  ) {
                                 d3.max(data, (d) => d.bytes) ]) 
                       .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
     
+    const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
+    const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
+
+    const timeScale = d3.scaleTime()
+                        .domain([ minDate, maxDate ])
+                        .range([ 0, chartWidth]);
+                        // .range([ chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
-                        // console.log(event);
-                      svg
-                        .selectAll("rect")
-                        .transition().duration(10)
-                        .attr("transform", event.transform.toString()
-                          // `
-                          // translate(${event.transform.x } , ${event.transform.y }) 
-                          // scale(${event.transform.k})
-                          // `
-                        )
+                        svg
+                          .selectAll("rect")
+                          .transition().duration(10)
+                          .attr("transform", event.transform.toString()
+                          )
                       });
   // function clicked(event, [x, y]) {
   //   event.stopPropagation();
@@ -99,11 +99,12 @@ export default function ImgChart(  props  ) {
         if(viewState) return "none" 
         else return "red"
       })
-      .attr("width", rectSize ).attr("height", rectSize )
-      .transition().duration(5000)
-      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      .transition().duration(5000)
-      .attr("y", (d) => yScale(d.bytes) - rectSize/2);
+      .attr("width", rectSize )
+      .attr("height", rectSize )
+      // .transition().duration(5000)
+      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      // .transition().duration(5000)
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 
     svg
       .selectAll("rect")
@@ -144,7 +145,6 @@ const CanvasContainer = styled.div `
 const SVGCanvas = styled.svg `
   width: 98vw;
   height: 90vh;
-  /* justify-content: center; */
     /* border: 1px solid orange; */
 `
 //Description
