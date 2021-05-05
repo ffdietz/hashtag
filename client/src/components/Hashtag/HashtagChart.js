@@ -8,13 +8,13 @@ const getDate = dateString => {
   return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
 };
 
-export default function ImgChart( props ) {
+export default function ImgChart(  props  ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(false);
+  const [ viewState, setViewState ] = useState(true);
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -40,13 +40,15 @@ export default function ImgChart( props ) {
     const margin = ({top: 10, bottom: 60, right: 40, left: 20})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    const chartWidth  = width  * 2; 
+    const chartWidth  = width  * 4; 
     const chartHeight = height * 3;
-    const rectSize = 40;
+    const rectSize = 80;
 
     const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
+
+    console.log(getDate(data[10].ig_uploaded_at))
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
@@ -56,24 +58,33 @@ export default function ImgChart( props ) {
                       .domain([ d3.min(data, (d) => d.bytes), 
                                 d3.max(data, (d) => d.bytes) ]) 
                       .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+    
+    const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
+    const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
 
     const timeScale = d3.scaleTime()
-                        .domain(
-                          [ d3.min(data, d => getDate(d.ig_uploaded_at)),
-                            d3.max(data, d => getDate(d.ig_uploaded_at))])
-                        .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ])
+                        .domain([ minDate, maxDate ])
+                        .range([ 0, chartWidth]);
+                        // .range([ chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
 
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
-                      .wheelDelta( (event) => -event.deltaY * (event.deltaMode ? 120 : 1) / 2500 )
                       .on("zoom", (event) => {
                         svg
                           .selectAll("rect")
-                          // .transition().duration(10)
+                          .transition().duration(10)
                           .attr("transform", event.transform.toString()
                           )
                       });
+  // function clicked(event, [x, y]) {
+  //   event.stopPropagation();
+  //   svg.transition().duration(750).call(
+  //     d3.zoom.transform,
+  //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
+  //     // d3.mouse(svg.node())
+  //   );
+  // }
 
     svg
       .selectAll("rect")
@@ -81,14 +92,14 @@ export default function ImgChart( props ) {
       .join("rect")
       .attr("class", "node")
       .attr("fill", (d) => {
-        if(!viewState)  "none" 
-        else  `url( #${d.asset_id} )` 
+        if(!viewState) return "none" 
+        else return `url( #${d.asset_id} )` 
       })  //id name of pattern
       .attr("stroke", () => {
-        if(viewState)  "none" 
-        else  "red"
+        if(viewState) return "none" 
+        else return "red"
       })
-      .attr("width",  rectSize )
+      .attr("width", rectSize )
       .attr("height", rectSize )
       // .transition().duration(5000)
       .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
@@ -127,7 +138,7 @@ const CanvasContainer = styled.div `
   width: 98vw;
   height: 90vh;
   display: flex;
-  margin-top: 5vh;
+  margin-top: 4vh;
   justify-content: center;
   /* border: 1px solid blue; */
 `
