@@ -3,10 +3,10 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-const getDate = dateString => {
-  const date = dateString.split(/[-_.]/);
-  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
-};
+// const getDate = dateString => {
+//   const date = dateString.split(/[-_.]/);
+//   return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+// };
 
 export default function ImgChart(  props  ) {
   const svgRef = useRef();
@@ -14,7 +14,9 @@ export default function ImgChart(  props  ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(true);
+  const [ viewState,
+     //setViewState 
+        ] = useState(true);
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -48,8 +50,6 @@ export default function ImgChart(  props  ) {
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
 
-    console.log(getDate(data[10].ig_uploaded_at))
-
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
                       .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
@@ -59,17 +59,18 @@ export default function ImgChart(  props  ) {
                                 d3.max(data, (d) => d.bytes) ]) 
                       .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
     
-    const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
-    const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
+    // const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
+    // const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
 
-    const timeScale = d3.scaleTime()
-                        .domain([ minDate, maxDate ])
-                        .range([ 0, chartWidth]);
+    // const timeScale = d3.scaleTime()
+    //                     .domain([ minDate, maxDate ])
+    //                     .range([ 0, chartWidth]);
                         // .range([ chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
 
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
+                      .wheelDelta( (event) => -event.deltaY * (event.deltaMode ? 120 : 1) / 2500 )
                       .on("zoom", (event) => {
                         svg
                           .selectAll("rect")
@@ -77,14 +78,6 @@ export default function ImgChart(  props  ) {
                           .attr("transform", event.transform.toString()
                           )
                       });
-  // function clicked(event, [x, y]) {
-  //   event.stopPropagation();
-  //   svg.transition().duration(750).call(
-  //     d3.zoom.transform,
-  //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
-  //     // d3.mouse(svg.node())
-  //   );
-  // }
 
     svg
       .selectAll("rect")
@@ -101,9 +94,9 @@ export default function ImgChart(  props  ) {
       })
       .attr("width", rectSize )
       .attr("height", rectSize )
-      // .transition().duration(5000)
-      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
-      // .transition().duration(5000)
+      .transition().duration(5000)
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
+      .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 
     svg
