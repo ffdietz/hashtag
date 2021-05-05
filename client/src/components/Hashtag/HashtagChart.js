@@ -3,148 +3,110 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-export default function ImgChart(  props  ) {
+const getDate = dateString => {
+  const date = dateString.split(/[-_.]/);
+  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+};
 
+export default function ImgChart( props ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
-  console.log(props);
+  const dimensions = useResizeObserver(wrapperRef);  
 
-  const [ APIelements ] = useState( props.data.resources );
-  const [ size, setSize ] = useState( 50 );
-  const [ opacity, setOpacity ] = useState( 100 );
-  const [ currentZoomState, setCurrentZoomState ] = useState(1);
-  const [ XScaleFaktor, setXScaleFaktor ] = useState(1);
-  const [ YScaleFaktor, setYScaleFaktor ] = useState(1);  
+  const [ data ] = useState( props.data );
   const [ viewState, setViewState ] = useState(false);
-  // const [ sorting, setSorting ] = useState("bytes")
-
-  function ImageDefsPattern () {
-      d3.select(svgRef.current)
-        .append("defs")
-        .selectAll(".image-pattern")
-        .data(APIelements)
-        .join("pattern")
-        .attr("id", (d) => { return d.asset_id })     //from api object response
-        .attr("height", "100%")
-        .attr("width", "100%")
-        .attr("patternContentUnits","objectBoundingBox")
-        .append("image")
-        .attr("height", 1)
-        .attr("width", 1)
-        .attr("preserveAspectRatio", "none")
-        .attr("href", (d) => { return d.url } )        //from api object response
-  }
+  // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
-    ImageDefsPattern();
-  }, [APIelements] );
+    d3
+      .select(svgRef.current)
+      .append("defs")
+      .selectAll(".image-pattern")
+      .data(data)
+      .join("pattern")
+      .attr("id", (d) => { return d.asset_id })     //from api object response
+      .attr("height", "100%")
+      .attr("width", "100%")
+      .attr("patternContentUnits","objectBoundingBox")
+      .append("image")
+      .attr("height", 1)
+      .attr("width", 1)
+      .attr("preserveAspectRatio", "xMidYMid")       // slice or meet
+      .attr("href", (d) => { return d.url });        //from api object response
+  }, [data] );
 
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    const margin = ({top: 60, bottom: 10, right: 30, left: 40})
-    const { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+    const svg = d3.select(svgRef.current)
+    const margin = ({top: 10, bottom: 60, right: 40, left: 20})
+    let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
+
+    const chartWidth  = width  * 2; 
+    const chartHeight = height * 3;
+    const rectSize = 40;
+
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
+    d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom().scaleTo(svg, initialZoom.k);
 
     const xScale =  d3.scaleBand()
-                      .domain( APIelements.map((d) => d.bytes ))
-                      .range([ margin.left, (width - margin.right)  ])
+                      .domain( data.map((d) => d.bytes ))
+                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
 
     const yScale =  d3.scaleLinear()
-                      .domain([ d3.min(APIelements, (d) => d.bytes), 
-                                d3.max(APIelements, (d) => d.bytes) ]) 
-                      .range([(height - margin.bottom) , margin.top]);
-    
+                      .domain([ d3.min(data, (d) => d.bytes), 
+                                d3.max(data, (d) => d.bytes) ]) 
+                      .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+
+    const timeScale = d3.scaleTime()
+                        .domain(
+                          [ d3.min(data, d => getDate(d.ig_uploaded_at)),
+                            d3.max(data, d => getDate(d.ig_uploaded_at))])
+                        .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ])
+
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
-                      .translateExtent([
-                        [ 0, 0 ], 
-                        [ width , height ] ])
+                      .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
+                      .wheelDelta( (event) => -event.deltaY * (event.deltaMode ? 120 : 1) / 2500 )
                       .on("zoom", (event) => {
-                        xScale.range([margin.left, width - margin.right].map(d => event.transform.applyX(d)));
-                        svg.selectAll("rect").attr("xScale", d => xScale(d.bytes));
-                        const zoomState = event.transform;
-                        setCurrentZoomState(zoomState);
-                        // console.log(zoomState);
-                        // const newScale = `
-                        //           translate(${ (zoomState.x)} , ${ (zoomState.y) } )
-                        //           scale(${zoomState.k})
-                        //           `;
-                        svg.selectAll("rect")
-                            .transition().duration(250)
-                            .attr("transform", zoomState.toString())
-                        // console.log(newScale);
+                        svg
+                          .selectAll("rect")
+                          // .transition().duration(10)
+                          .attr("transform", event.transform.toString()
+                          )
                       });
 
     svg
-      .selectAll(".node")
-      .data(APIelements)
+      .selectAll("rect")
+      .data(data)
       .join("rect")
-        .attr("class", "node")
-        .attr("fill", (d) => {
-          if(viewState) return "none" 
-          return `url( #${d.asset_id} )` 
-          })  //id name of pattern
-          .attr("stroke", () => {
-            if(!viewState) return "none" 
-            return "red"
-          })
+      .attr("class", "node")
+      .attr("fill", (d) => {
+        if(!viewState)  "none" 
+        else  `url( #${d.asset_id} )` 
+      })  //id name of pattern
+      .attr("stroke", () => {
+        if(viewState)  "none" 
+        else  "red"
+      })
+      .attr("width",  rectSize )
+      .attr("height", rectSize )
+      // .transition().duration(5000)
+      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      // .transition().duration(5000)
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 
-        // .transition().duration(500)
-        .style("opacity", opacity / 100)
-        // .transition().duration(500)
-        .attr("width", 80 ).attr("height", 80 )
-        // .transition().duration(1500)
-        .attr("x", (d) => xScale(d.bytes) - 80/2)
-        // .transition().duration(1500)
-        .attr("y", (d) => yScale(d.bytes) - 80/2)
-        
-    svg.call(zoomed);
+    svg
+      .selectAll("rect")
+      .attr("transform", initialZoom);
 
-}, [ dimensions, size, opacity, currentZoomState, XScaleFaktor, YScaleFaktor, viewState ]);
+    svg.call(zoomed)
+
+}, [ dimensions, data, viewState ]);
 
   return (
     <HashtagChartContainer>
-      <InputWrapper>
-        <label for="size"> SIZE </label>
-        <Input 
-          id="size" 
-          type="number" 
-          min="0" max="80" step="2" defaultValue="40" 
-          value={ size }
-          onChange= { e => setSize(e.target.value) }
-        />
-          
-        <label for="opacity"> OPACITY </label>
-        <Input 
-          id="opacity"
-          type="number"
-          min="5" max="100" step="5" defaultValue="60" 
-          value={ opacity }
-          onChange= { e => setOpacity(e.target.value) }
-        />
-
-        {/* <label for="XScale"> XScale </label>
-        <Input 
-          id="XScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ XScaleFaktor }
-          onChange= { e => setXScaleFaktor(e.target.value) }
-        />
-
-        <label for="YScale"> YScale </label>
-        <Input 
-          id="YScale" 
-          type="number" 
-          min="0" max="10" step="0.5" defaultValue="1" 
-          value={ YScaleFaktor }
-          onChange= { e => setYScaleFaktor(e.target.value) }
-        /> */}
-
-      </InputWrapper>
-
       <CanvasContainer ref={wrapperRef} >
-        <SVGCanvas ref={svgRef} />
+        <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
     </HashtagChartContainer>
   );
@@ -158,49 +120,22 @@ const HashtagChartContainer = styled.div `
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--font-color);
+  color: var(--font-color);  
+  /* border: 1px solid blue; */
 `
 const CanvasContainer = styled.div `
-  width: 95vw;
-  height: 85vh;
-  margin: auto;
-  margin-top:10vh;
+  width: 98vw;
+  height: 90vh;
+  display: flex;
+  margin-top: 5vh;
+  justify-content: center;
   /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
-    width: 95vw;
-    height: 85vh;
+  width: 98vw;
+  height: 90vh;
     /* border: 1px solid orange; */
 `
-const InputWrapper = styled.div `
-  display: flex;
-  flex-direction: column;
-  z-index: 1000;
-`
-const Input = styled.input `
-  width: 50px;
-  height: 40px;
-  line-height: 1.65;
-  float: left;
-  display: block;
-  padding: 0;
-  margin: 0;
-  text-align: left;
-  padding-left: 15px;
-
-  background: black;
-  color: var(--font-color);
-  font-size: 1.3rem;  
-  font-family: 'Lato';
-  border: none;
-  /* border: 0.5px solid turquoise; */
-
-  &:focus {
-  border: 0.5px solid turquoise;
-  }
-}
-`
-
 //Description
   //scaleBand split the axis and add margins
   //it split the axis in a defined number of elements

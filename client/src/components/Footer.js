@@ -9,16 +9,7 @@ export default function Footer() {
                 <FooterRow>
                     <FooterColumn>
                         <h2>Colectivo<br/>UltimaEsperanza</h2>
-                    </FooterColumn>
-                    
-                    {/* <FooterColumn>
-                        <FooterMenu>
-                            <li> <FooterLink to="/" >        home    </FooterLink></li>
-                            <li> <FooterLink to="/hashtag" > hashtag </FooterLink></li>
-                            <li> <FooterLink to="/collective" >   about   </FooterLink></li>
-                        </FooterMenu>
-                    </FooterColumn> */}
-                    
+                    </FooterColumn>                    
                     <FooterColumn>
                         <FooterMenu>
                             <li> <FooterLink href="https://ultimaesperanza.org/"> 
