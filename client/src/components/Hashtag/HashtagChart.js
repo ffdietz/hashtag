@@ -46,11 +46,8 @@ export default function ImgChart(  props  ) {
 
     const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth) / 2 , height *1 ) ;
 
-    d3.zoom()
-      .translateTo(svg, initialZoom.x, initialZoom.y);
-    d3.zoom()
-      .scaleTo(svg, initialZoom.k);
-    // const rectGroup = ;
+    d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
+    d3.zoom().scaleTo(svg, initialZoom.k);
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
@@ -61,19 +58,22 @@ export default function ImgChart(  props  ) {
                                 d3.max(data, (d) => d.bytes) ]) 
                       .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
     
+    const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
+    const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
+
+    console.log(maxDate);
+    const timeScale = d3.scaleTime()
+                        .domain([ minDate, maxDate ]) 
+                        .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
-                        // console.log(event);
                       svg
                         .selectAll("rect")
                         .transition().duration(10)
                         .attr("transform", event.transform.toString()
-                          // `
-                          // translate(${event.transform.x } , ${event.transform.y }) 
-                          // scale(${event.transform.k})
-                          // `
                         )
                       });
 
@@ -90,11 +90,14 @@ export default function ImgChart(  props  ) {
         if(viewState) return "none" 
         else return "red"
       })
-      .attr("width", rectSize ).attr("height", rectSize )
-      .transition().duration(5000)
+      .attr("width", rectSize )
+      .attr("height", rectSize )
+      // .transition().duration(5000)
       .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      .transition().duration(5000)
-      .attr("y", (d) => yScale(d.bytes) - rectSize/2);
+      // .attr("x", (d) => timeScale(d.ig_uploaded_at) )
+      // .transition().duration(5000)
+      // .attr("y", (d) => yScale(d.bytes) - rectSize/2);
+      .attr("y", (d) => timeScale(d.ig_uploaded_at) );
 
     svg
       .selectAll("rect")
@@ -135,7 +138,6 @@ const CanvasContainer = styled.div `
 const SVGCanvas = styled.svg `
   width: 98vw;
   height: 90vh;
-  /* justify-content: center; */
     /* border: 1px solid orange; */
 `
 //Description
