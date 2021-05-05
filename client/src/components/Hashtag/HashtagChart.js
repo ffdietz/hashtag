@@ -11,7 +11,7 @@ const getDate = dateString => {
 export default function ImgChart(  props  ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
+  const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
   const [ viewState, setViewState ] = useState(true);
@@ -77,6 +77,14 @@ export default function ImgChart(  props  ) {
                           .attr("transform", event.transform.toString()
                           )
                       });
+  // function clicked(event, [x, y]) {
+  //   event.stopPropagation();
+  //   svg.transition().duration(750).call(
+  //     d3.zoom.transform,
+  //     d3.zoomIdentity.translate(width / 2, height / 2).scale(40).translate(-x, -y),
+  //     // d3.mouse(svg.node())
+  //   );
+  // }
 
     svg
       .selectAll("rect")
