@@ -3,8 +3,12 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-export default function ImgChart(  props  ) {
+const getDate = dateString => {
+  const date = dateString.split(/[-_.]/);
+  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+};
 
+export default function ImgChart(  props  ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);
