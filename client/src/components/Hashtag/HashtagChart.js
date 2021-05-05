@@ -44,10 +44,11 @@ export default function ImgChart(  props  ) {
     const chartHeight = height * 3;
     const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth) / 2 , height *1 ) ;
-
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
+
+    console.log(getDate(data[10].ig_uploaded_at))
 
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
@@ -61,20 +62,20 @@ export default function ImgChart(  props  ) {
     const minDate = d3.min(data, d => getDate(d.ig_uploaded_at));
     const maxDate = d3.max(data, d => getDate(d.ig_uploaded_at));
 
-    console.log(maxDate);
     const timeScale = d3.scaleTime()
-                        .domain([ minDate, maxDate ]) 
-                        .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+                        .domain([ minDate, maxDate ])
+                        .range([ 0, chartWidth]);
+                        // .range([ chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
 
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ [ margin.left, margin.top ], [ chartWidth - margin.right, chartHeight - margin.bottom ] ])
                       .on("zoom", (event) => {
-                      svg
-                        .selectAll("rect")
-                        .transition().duration(10)
-                        .attr("transform", event.transform.toString()
-                        )
+                        svg
+                          .selectAll("rect")
+                          .transition().duration(10)
+                          .attr("transform", event.transform.toString()
+                          )
                       });
 
     svg
@@ -93,11 +94,9 @@ export default function ImgChart(  props  ) {
       .attr("width", rectSize )
       .attr("height", rectSize )
       // .transition().duration(5000)
-      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      // .attr("x", (d) => timeScale(d.ig_uploaded_at) )
+      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
       // .transition().duration(5000)
-      // .attr("y", (d) => yScale(d.bytes) - rectSize/2);
-      .attr("y", (d) => timeScale(d.ig_uploaded_at) );
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 
     svg
       .selectAll("rect")
