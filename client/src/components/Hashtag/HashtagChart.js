@@ -40,9 +40,9 @@ export default function ImgChart( props ) {
     const margin = ({top: 10, bottom: 60, right: 40, left: 20})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    const chartWidth  = width  * 2; 
+    const chartWidth  = width  * 4; 
     const chartHeight = height * 3;
-    const rectSize = 40;
+    const rectSize = 80;
 
     const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
@@ -81,17 +81,18 @@ export default function ImgChart( props ) {
       .join("rect")
       .attr("class", "node")
       .attr("fill", (d) => {
-        if(!viewState)  "none" 
-        else  `url( #${d.asset_id} )` 
+        if(!viewState)  return "none" 
+        else  return `url( #${d.asset_id} )` 
       })  //id name of pattern
       .attr("stroke", () => {
-        if(viewState)  "none" 
-        else  "red"
+        if(viewState)  return "none" 
+        else  return "red"
       })
       .attr("width",  rectSize )
       .attr("height", rectSize )
       // .transition().duration(5000)
-      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      // .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
       // .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 

@@ -9,16 +9,6 @@ router.get('/', (req, res, next) => {
   // res.render('index');
 });
 
-// Call the cloudinary api
-router.get('/api', async (req, res) => {
-  const images = await cloudinary.api.resources(
-      {
-      folder: 'Hashtag',
-      },
-    );
-  return res.json( images );
-  });
-
 router.get('/api/:quantity', async (req, res) => {
   const images = await cloudinary.api.resources({
       // type: 'upload',
