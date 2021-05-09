@@ -64,8 +64,8 @@ const BiographyText = styled.p `
     padding: 0;
     text-align: justify;
     
-    font-size:1.4rem;
-    line-height: 1.6;
+    font-size: 1.4rem;
+    line-height: 1.6rem;
 
     color: var(--font-color);
 

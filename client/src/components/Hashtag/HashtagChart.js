@@ -91,8 +91,8 @@ export default function ImgChart( props ) {
       .attr("width",  rectSize )
       .attr("height", rectSize )
       // .transition().duration(5000)
-      // .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
-      .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
+      .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      // .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
       // .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
 
