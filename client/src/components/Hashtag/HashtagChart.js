@@ -3,10 +3,10 @@ import useResizeObserver from "./useResizeObserver";
 import styled from 'styled-components'
 import * as d3 from 'd3';
 
-const getDate = dateString => {
-  const date = dateString.split(/[-_.]/);
-  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
-};
+// const getDate = dateString => {
+//   const date = dateString.split(/[-_.]/);
+//   return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+// };
 
 export default function ImgChart( props ) {
   const svgRef = useRef();
@@ -15,6 +15,7 @@ export default function ImgChart( props ) {
 
   const [ data ] = useState( props.data );
   const [ viewState, setViewState ] = useState(false);
+
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function ImgChart( props ) {
                       .translateExtent([ 
                         [ 0, 0 ], 
                         [ chartWidth , chartHeight] ])
+
                       .wheelDelta( (event) => -event.deltaY * (event.deltaMode ? 120 : 1) / 2500 )
                       .on("zoom", (event) => {
                         svg
