@@ -7,7 +7,7 @@ export class Collective extends Component {
         return ( 
             p.split('\n\n').map((paragraph,index) =>
                 <p key={index}>
-                    {paragraph.split('\n')
+                    { paragraph.split('\n')
                     .reduce((total, line) => [total, <br />, line])}
                 </p>
             )
@@ -17,11 +17,9 @@ export class Collective extends Component {
     render() {
         return (
             <AboutContainer>
-                <AboutWrapper>
                     <BiographyText>
                         {this.paragraph(Biography)}
                     </BiographyText>
-                </AboutWrapper>
             </AboutContainer>
         )
     }
@@ -35,39 +33,18 @@ const AboutContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    padding-top: 5vh;
     color: var(--font-color);
 `
-
-const AboutWrapper = styled.div`
-    width: 75vw;
-    height: 60vh;
-
-    display:flex;
-    flex-direction: row;
-    /* align-items: flex-start; */
-    align-items: center;
-    justify-content: space-around;
-    
-`
-
-// const Title = styled.h2 `
-//     border: 1px solid green;
-//     margin: 0;
-//     padding: 0;
-// `
-
 const BiographyText = styled.p `
-    height: 50vh;
-    width: 50vh;
-    margin: 0;
-    margin-top: -5vh;
-    padding: 0;
+    width: clamp(400px, 50vh, 600px);
+    height: clamp(500px, 50%, 65%);
     text-align: justify;
     
-    font-size: 1.4rem;
-    line-height: 1.6rem;
-
+    font-size: clamp(10px, 1.6rem, 20px);
+    line-height: clamp(11px, 1.8rem, 22px);
     color: var(--font-color);
+
 
 `
 const Biography = 
