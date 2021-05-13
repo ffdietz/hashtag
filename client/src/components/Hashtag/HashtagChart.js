@@ -71,7 +71,7 @@ export default function ImgChart( props ) {
                         [ 0, 0 ], 
                         [ chartWidth , chartHeight] ])
                       .wheelDelta((event) => {
-                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 2500})
+                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 2000})
                       .on("zoom", (event) => {
                         nodesGroup
                           // .transition().duration(10)
