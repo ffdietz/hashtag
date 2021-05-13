@@ -14,7 +14,7 @@ export default function ImgChart( props ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(true);
+  const [ viewState, setViewState ] = useState(false);
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -74,7 +74,7 @@ export default function ImgChart( props ) {
                         return -event.deltaY * (event.deltaMode ? 120 : 1) / 2500})
                       .on("zoom", (event) => {
                         nodesGroup
-                          .transition().duration(10)
+                          // .transition().duration(10)
                           .attr("transform", event.transform.toString())
                       });
 
@@ -129,12 +129,11 @@ export default function ImgChart( props ) {
         <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
 
-      <div>
+      <ButtonContainer>
         <Button id="timeline">time</Button>
         <Button id="ordinal">ordinal</Button>
-      </div>
+      </ButtonContainer>
     </HashtagChartContainer>
-    
   );
 }
 
@@ -143,32 +142,40 @@ const HashtagChartContainer = styled.div `
   height: 100vh;
   margin: 0;
   padding: 0;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-  color: var(--font-color);  
-  /* border: 1px solid blue; */
+  display: flex;
+  flex-wrap: wrap;
+  color: var(--font-color);
+    /* border: 1px solid green; */
 `
 const CanvasContainer = styled.div `
-  width: 98vw;
-  height: 90vh;
+  width: 99vw;
+  height: 99vh;
   display: flex;
-  margin-top: 10px;
+  margin: auto;
   justify-content: center;
-  border: 1px solid blue;
+  align-items: center;
+    /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
-  width: 98vw;
-  height: 90vh;
-    border: 1px solid orange;
+  width: 100%;
+  height: 98%;
+    /* border: 1px solid orange; */
 `
-
+const ButtonContainer = styled.div`
+  position: relative;
+  bottom: 40px;
+  left: 10px;
+`
 const Button = styled.button`
   width:80px;
   height:30px;
-  text-transform: uppercase;
-  margin:10;
+  margin-right:2px;
   padding:0;
+  background-color: transparent;
+  border: 1px solid turquoise;
+  color: turquoise;
+  text-transform: uppercase;
+  text-align: center;
 `
 //Description
   //scaleBand split the axis and add margins
