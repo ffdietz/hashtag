@@ -7,8 +7,9 @@ export class Collective extends Component {
         return ( 
             p.split('\n\n').map((paragraph,index) =>
                 <p key={index}>
-                    { paragraph.split('\n')
-                    .reduce((total, line) => [total, <br />, line])}
+                    { paragraph
+                        .split('\n')
+                        .reduce((total, line) => [total, <br />, line])}
                 </p>
             )
         )
@@ -17,9 +18,9 @@ export class Collective extends Component {
     render() {
         return (
             <AboutContainer>
-                    <BiographyText>
-                        {this.paragraph(Biography)}
-                    </BiographyText>
+                <BiographyText>
+                    {this.paragraph(Biography)}
+                </BiographyText>
             </AboutContainer>
         )
     }
@@ -37,8 +38,8 @@ const AboutContainer = styled.div`
     color: var(--font-color);
 `
 const BiographyText = styled.p `
-    width: clamp(400px, 50vh, 600px);
-    height: clamp(500px, 50%, 65%);
+    width: clamp(400px, 50vh, 900px);
+    height: clamp(400px, 50vh, 700px);
     text-align: justify;
     
     font-size: clamp(10px, 1.6rem, 20px);

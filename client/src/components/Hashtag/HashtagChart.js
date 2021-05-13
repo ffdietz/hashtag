@@ -14,7 +14,7 @@ export default function ImgChart( props ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(false);
+  const [ viewState, setViewState ] = useState(true);
   // const [ currentZoomState, setCurrentZoomState ] = useState(1);
 
   useEffect(() => {
@@ -37,20 +37,22 @@ export default function ImgChart( props ) {
 
   useEffect(() => {
     const svg = d3.select(svgRef.current)
-    const margin = ({top: 10, bottom: 60, right: 40, left: 20})
+    const margin = ({top: 10, bottom: 10, right: 20, left: 20})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    const chartWidth  = width  * 1.5; 
-    const chartHeight = height * 1.5;
+    const chartWidth  = width  * 4; 
+    const chartHeight = height * 3;
     const rectSize = 80;
 
-    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height * 1 );
+    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height*1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
 
+    const nodesGroup = svg.selectAll("rect");
+
     const xScale =  d3.scaleBand()
                       .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
+                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize]);
 
     const yScale =  d3.scaleLinear()
                       .domain([ d3.min(data, (d) => d.bytes), 
@@ -61,24 +63,41 @@ export default function ImgChart( props ) {
                         .domain(
                           [ d3.min(data, d => getDate(d.ig_uploaded_at)),
                             d3.max(data, d => getDate(d.ig_uploaded_at))])
-                        .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ])
+                        .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
 
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
                       .translateExtent([ 
                         [ 0, 0 ], 
                         [ chartWidth , chartHeight] ])
-                      .wheelDelta( (event) => -event.deltaY * (event.deltaMode ? 120 : 1) / 2500 )
+                      .wheelDelta((event) => {
+                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 2500})
                       .on("zoom", (event) => {
-                        svg
-                          .selectAll("rect")
-                          // .transition().duration(10)
-                          .attr("transform", event.transform.toString()
-                          )
+                        nodesGroup
+                          .transition().duration(10)
+                          .attr("transform", event.transform.toString())
                       });
 
-    svg
-      .selectAll("rect")
+    function timeLine() {
+      nodesGroup
+        .transition().duration(5000)
+        .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
+      }
+
+    function ordinal() {
+      nodesGroup
+        .transition().duration(5000)
+        .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
+      }
+
+
+    d3.select("#timeline")
+      .on('click', () => {  timeLine(); })
+
+    d3.select("#ordinal")
+      .on('click', () => {  ordinal(); })
+
+    nodesGroup
       .data(data)
       .join("rect")
       .attr("class", "node")
@@ -88,18 +107,16 @@ export default function ImgChart( props ) {
       })  //id name of pattern
       .attr("stroke", () => {
         if(viewState)  return "none" 
-        else  return "red"
+        else  return "turquoise"
       })
       .attr("width",  rectSize )
       .attr("height", rectSize )
       .transition().duration(5000)
-      // .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
       .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
       .transition().duration(5000)
-      .attr("y", (d) => yScale(d.bytes) - rectSize/2 );
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2 )
 
-    svg
-      .selectAll("rect")
+    nodesGroup
       .attr("transform", initialZoom);
 
     svg.call(zoomed)
@@ -111,7 +128,13 @@ export default function ImgChart( props ) {
       <CanvasContainer ref={wrapperRef} >
         <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
+
+      <div>
+        <Button id="timeline">time</Button>
+        <Button id="ordinal">ordinal</Button>
+      </div>
     </HashtagChartContainer>
+    
   );
 }
 
@@ -120,9 +143,9 @@ const HashtagChartContainer = styled.div `
   height: 100vh;
   margin: 0;
   padding: 0;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   color: var(--font-color);  
   /* border: 1px solid blue; */
 `
@@ -130,14 +153,22 @@ const CanvasContainer = styled.div `
   width: 98vw;
   height: 90vh;
   display: flex;
-  margin-top: 5vh;
+  margin-top: 10px;
   justify-content: center;
-  /* border: 1px solid blue; */
+  border: 1px solid blue;
 `
 const SVGCanvas = styled.svg `
   width: 98vw;
   height: 90vh;
-    /* border: 1px solid orange; */
+    border: 1px solid orange;
+`
+
+const Button = styled.button`
+  width:80px;
+  height:30px;
+  text-transform: uppercase;
+  margin:10;
+  padding:0;
 `
 //Description
   //scaleBand split the axis and add margins

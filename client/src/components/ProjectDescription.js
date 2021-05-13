@@ -7,8 +7,9 @@ export class AboutProject extends Component {
         return ( 
             p.split('\n\n').map((paragraph,index) =>
                 <p key={index}>
-                    {paragraph.split('\n')
-                    .reduce((total, line) => [total, <br />, line])}
+                    { paragraph
+                        .split('\n')
+                        .reduce((total, line) => [total, <br />, line])}
                 </p>
             )
         )

@@ -15,7 +15,7 @@ export class Hashtag extends Component {
 
     async componentDidMount(){
         const response = await axios.get(`http://localhost:5500/hashtag/resources`)
-        .then(response => { console.log(response); return response })
+        .then(response => { return response })
         .catch(error => console.log(error));
         this.setState({ 
             gallery: response.data,
