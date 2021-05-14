@@ -14,8 +14,7 @@ export default function ImgChart( props ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(false);
-  // const [ currentZoomState, setCurrentZoomState ] = useState(1);
+  const [ viewState, setViewState ] = useState(true);
 
   useEffect(() => {
     d3
@@ -89,7 +88,6 @@ export default function ImgChart( props ) {
         .transition().duration(5000)
         .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
       }
-
 
     d3.select("#timeline")
       .on('click', () => {  timeLine(); })
