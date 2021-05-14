@@ -6,21 +6,20 @@ const { cloudinary } = require('../configs/cloudinary-setup.config');
 /* Connection testing*/
 router.get('/', (req, res, next) => {
   res.send('server connected')
-  // res.render('index');
 });
 
 router.get('/api/:quantity', async (req, res) => {
   const images = await cloudinary.api.resources({
-      resource_type: 'image',
-      max_results: req.params.quantity
-    });
-    return res.json( images );
+    resource_type: 'image',
+    max_results: req.params.quantity
   });
+  return res.json( images );
+});
 
 router.get('/hashtag/color/:id', async (req, res) => {
   const images = await cloudinary.api.resource(
-    req.params.id,
-  {
+    req.params.id
+  ,{
     colors: true,
     // image_metadata:true,
   });
@@ -39,28 +38,27 @@ module.exports = router;
 async function list_resources(results, next_cursor = null) {
   await new Promise((resolve) => {
     cloudinary.api.resources({
-        resource_type: "image",
-        max_results: 500,
-        next_cursor: next_cursor,
-      },
-      function (err, res) {
-        if (err) {
-            console.log(err);
-            resolve();
+      resource_type: "image",
+      max_results: 500,
+      next_cursor: next_cursor,
+    },
+    function (err, res) {
+      if (err) {
+        console.log(err);
+        resolve();
+      } else {
+        res.resources.forEach(function (resource) {
+          resource.ig_uploaded_at = resource.public_id.slice(0,19);          
+          results.push(resource);
+        });
+        if (res.next_cursor) {
+          list_resources(results, res.next_cursor)
+          .then(() => resolve());
         } else {
-            res.resources.forEach(function (resource) {
-              resource.ig_uploaded_at = resource.public_id.slice(0,19);
-              results.push(resource);
-            });
-            if (res.next_cursor) {
-                list_resources(results, res.next_cursor)
-                .then(() => resolve());
-            } else {
-                resolve();
-            }
-          }
-        } 
-    );
+          resolve();
+        }
+      }
+    });
   });
 }
 

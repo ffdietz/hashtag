@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const ImageItemSchema = new Schema({
+const CloudImageSchema = new Schema({
     asset_id: String,
     public_id: String,
     format: String,
@@ -12,9 +12,10 @@ const ImageItemSchema = new Schema({
     bytes: Number,
     width: Number,
     height: Number,
-    url: mongoose.SchemaTypes.Url,
-    secure_url: mongoose.SchemaTypes.Url
+    url: String,
+    secure_url: String,
+    ig_uploaded_at: String
     });
 
-const ImageItem = mongoose.model('ImageItem', ImageItemSchema);
-module.exports = ImageItem;
+const CloudImage = mongoose.model('CloudImage', CloudImageSchema);
+module.exports = CloudImage
