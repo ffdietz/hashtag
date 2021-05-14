@@ -8,7 +8,7 @@ router.get('/', (req, res, next) => {
   res.send('server connected')
 });
 
-router.get('/api/:quantity', async (req, res) => {
+router.get('/hashtag/:quantity', async (req, res) => {
   const images = await cloudinary.api.resources({
     resource_type: 'image',
     max_results: req.params.quantity
@@ -17,12 +17,14 @@ router.get('/api/:quantity', async (req, res) => {
 });
 
 router.get('/hashtag/color/:id', async (req, res) => {
-  const images = await cloudinary.api.resource(
-    req.params.id
-  ,{
-    colors: true,
-    // image_metadata:true,
-  });
+  const images = await cloudinary.api
+    .resource( 
+      req.params.id, 
+      { 
+        colors: true,
+        image_metadata:true,
+      }
+    );
     return res.json( images );
 });
 
@@ -48,7 +50,7 @@ async function list_resources(results, next_cursor = null) {
         resolve();
       } else {
         res.resources.forEach(function (resource) {
-          resource.ig_uploaded_at = resource.public_id.slice(0,19);          
+          resource.ig_uploaded_at = resource.public_id.slice(0,19);
           results.push(resource);
         });
         if (res.next_cursor) {
