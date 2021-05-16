@@ -1,8 +1,8 @@
 const express = require('express');
 const router  = express.Router();
-require('dotenv').config();
 const { cloudinary } = require('../configs/cloudinary-setup.config');
-require('../configs/database.config.js')
+const CloudImage = require('../models/CloudImage')
+require('../configs/database.config');
 
 /* Connection test*/
 router.get('/', (req, res, next) => {
@@ -37,6 +37,16 @@ router.get('/resources', async (req, res) => {
   const results = [];
   await list_resources(results);
   return res.status(200).json(results);
+});
+
+router.get('/db-items', (req, res) => {
+  CloudImage.find({  })
+  .then((data) => {
+      res.json(data);
+  })
+  .catch((error) => {
+      console.log('error: ', error);
+  });
 });
 
 module.exports = router;

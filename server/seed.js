@@ -1,10 +1,13 @@
 const mongoose = require("mongoose");
+require('dotenv').config();
 const CloudImage = require("./models/CloudImage");
 const axios = require("axios");
 let saveCounter = 0;
 
+const db_uri = process.env.DB_URI;
+
 mongoose
-    .connect("mongodb+srv://ffd:MCP6oo2@cluster0.z7jt8.mongodb.net/hashtag", {
+    .connect(db_uri, {
         useCreateIndex: true,
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -23,41 +26,40 @@ const getData = () => {
 }
 
 const cloudData = async () => {
-const data = getData()
-    .then(response => {
-        const resultData = response.data;
-        for(let i = 0 ; i < resultData.length; i++){
-            let cloudImage = new CloudImage ({
-                asset_id:   resultData[i].asset_id,
-                public_id:  resultData[i].public_id,
-                format:     resultData[i].format,
-                version:    resultData[i].version,
-                resource_type: resultData[i].resource_type,
-                type:       resultData[i].type,
-                created_at: resultData[i].created_at,
-                bytes:      resultData[i].bytes,
-                width:      resultData[i].width,
-                height:     resultData[i].height,
-                url:        resultData[i].url,
-                secure_url: resultData[i].secure_url,
-                ig_uploaded_at: resultData[i].ig_uploaded_at
-            })
-            cloudImage.save ( () => {
-                console.log("saved" + cloudImage)
-                saveCounter++;
-            
-                if (saveCounter === resultData.length) {
-                console.log(saveCounter);
-                    mongoose.disconnect()
-                    .then(() => console.log("saved succesfully and mongodb disconnected"))
-                    .catch(error => console.log(error));
-                    }
-            });
-        }
-    })
-    .catch(error => {
-    console.log(error)
-    })
+    const data = getData()
+        .then(response => {
+            const resultData = response.data;
+            for(let i = 0 ; i < resultData.length; i++){
+                let cloudImage = new CloudImage ({
+                    asset_id:       resultData[i].asset_id,
+                    public_id:      resultData[i].public_id,
+                    format:         resultData[i].format,
+                    version:        resultData[i].version,
+                    resource_type:  resultData[i].resource_type,
+                    type:           resultData[i].type,
+                    downloaded_at:  resultData[i].created_at,
+                    bytes:          resultData[i].bytes,
+                    width:          resultData[i].width,
+                    height:         resultData[i].height,
+                    url:            resultData[i].url,
+                    uploaded_at:    resultData[i].ig_uploaded_at,
+                    image_description: '',
+                    keywords: ''
+                })
+                cloudImage.save ( () => {
+                    console.log("saved" + cloudImage)
+                    saveCounter++;
+                
+                    if (saveCounter === resultData.length) {
+                    console.log(saveCounter);
+                        mongoose.disconnect()
+                        .then(() => console.log("saved succesfully and mongodb disconnected"))
+                        .catch(error => console.log(error));
+                        }
+                });
+            }
+        })
+        .catch(error => { console.log(error)    })
 }
 
 cloudData()

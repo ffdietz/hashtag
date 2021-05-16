@@ -14,21 +14,15 @@ const CloudImageSchema = new Schema({
     height: Number,
     url: String,
     secure_url: String,
-    ig_uploaded_at: String,
-    image_metadata: { 
-        ImageDescription: String,
-        Keywords: String
-    },
+    ig_uploaded_at: Date,
+    image_description: String,
+    keywords: String,
     colors: [{ String }],
-    predominant: {
-        google: [{ String }]
-    },
-    
-
-    });
+    predominant_color: [{ String }]
+});
 
 const CloudImage = mongoose.model('CloudImage', CloudImageSchema);
-module.exports = CloudImage
+module.exports = CloudImage;
 
 const cloud_request_model_edited = 
 {
