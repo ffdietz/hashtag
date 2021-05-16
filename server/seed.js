@@ -4,7 +4,7 @@ const axios = require("axios");
 let saveCounter = 0;
 
 mongoose
-    .connect("mongodb://localhost:27017/hashtag", {
+    .connect("mongodb+srv://ffd:MCP6oo2@cluster0.z7jt8.mongodb.net/hashtag", {
         useCreateIndex: true,
         useNewUrlParser: true,
         useUnifiedTopology: true
@@ -12,9 +12,7 @@ mongoose
     .then(x => console.log(`Connected to Mongo - Database name: "${x.connections[0].name}"`))
     .catch(err => console.error('Error connecting to Mongo', err.message));
 
-console.log(process.env.MONGO_URI)
-
-const url = "http://localhost:5500/hashtag/resources";
+const url = "http://localhost:5500/resources";
 
 const getData = () => {
     try {
@@ -28,7 +26,6 @@ const cloudData = async () => {
 const data = getData()
     .then(response => {
         const resultData = response.data;
-        // console.log(resultData)
         for(let i = 0 ; i < resultData.length; i++){
             let cloudImage = new CloudImage ({
                 asset_id:   resultData[i].asset_id,
@@ -52,7 +49,7 @@ const data = getData()
                 if (saveCounter === resultData.length) {
                 console.log(saveCounter);
                     mongoose.disconnect()
-                    .then(() => console.log("saved succesfully and mongodb   disconnected"))
+                    .then(() => console.log("saved succesfully and mongodb disconnected"))
                     .catch(error => console.log(error));
                     }
             });

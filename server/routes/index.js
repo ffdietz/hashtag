@@ -1,7 +1,8 @@
-const { load } = require('dotenv');
 const express = require('express');
 const router  = express.Router();
+require('dotenv').config();
 const { cloudinary } = require('../configs/cloudinary-setup.config');
+require('../configs/database.config.js')
 
 /* Connection test*/
 router.get('/', (req, res, next) => {
