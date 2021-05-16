@@ -85,7 +85,7 @@ const NavLinkItem = styled(NavLink)`
     font-size: 1.1rem;
     color: var(--text);
 
-    margin: 0 30px;
+    margin-right: 20px;
     padding-bottom: 1.2vh;
     transition: border 0.3s;
 
@@ -99,6 +99,7 @@ const NavLinkItem = styled(NavLink)`
 `
 
 const NavIcon = styled.i`
+    width: 0px;
     font-size: 1.5rem;
     cursor: pointer;
     transition: opacity 1s linear;
@@ -106,6 +107,6 @@ const NavIcon = styled.i`
 
     &.active{
         transition: opacity 1s;
-        opacity: 1;
+        opacity: 0.3;
     }
 `

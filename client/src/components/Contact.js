@@ -7,20 +7,18 @@ export class Contact extends Component {
             <ContactContainer className="contact">
                 <ContactWrapper>
                         <ContactLink href="mailto: ultimaesperanza@gmail.com"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText("ultimaesperanza@gmail.com")}}
-                                    > 
-                                    <i className="fas fa-envelope"/> 
-                                </ContactLink>
+                                        onClick={() => { navigator.clipboard.writeText("ultimaesperanza@gmail.com")}}> 
+                            <i className="fas fa-envelope"/> 
+                        </ContactLink>
                         <ContactLink href="https://ultimaesperanza.org/"> 
-                                    <i className="fas fa-globe"/> 
-                                </ContactLink>
+                            <i className="fas fa-globe"/> 
+                        </ContactLink>
                         <ContactLink href="https://www.facebook.com/colectivoultimaesperanza/"> 
-                                <i className="fab fa-facebook-square"/> 
-                            </ContactLink>
+                            <i className="fab fa-facebook-square"/> 
+                        </ContactLink>
                         <ContactLink href="https://www.instagram.com/colectivoultimaesperanza/"> 
-                                <i className="fab fa-instagram"/> 
-                            </ContactLink>
+                            <i className="fab fa-instagram"/> 
+                        </ContactLink>
                 </ContactWrapper>
             </ContactContainer>
         )

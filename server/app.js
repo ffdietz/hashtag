@@ -17,7 +17,7 @@ const debug        = require('debug')(`${app_name}:${path.basename(__filename).s
 const app = express();
 
 //Config Mongo connection
-require('./configs/db.config');
+require('./configs/database.config');
 
 app.use(cors());
 
@@ -38,11 +38,10 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '.hbs');
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
-
+// app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 // default value for title local
-app.locals.title = 'Hashtag - Colectivo Ultima Esperanza';
+app.locals.title = 'Hashtag - Ultima Esperanza';
 
 const index = require('./routes/index');
 app.use('/', index);
