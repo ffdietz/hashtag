@@ -152,6 +152,7 @@ const CanvasContainer = styled.div `
   margin: auto;
   justify-content: center;
   align-items: center;
+  margin-left: 3vw;
     /* border: 1px solid blue; */
 `
 const SVGCanvas = styled.svg `
