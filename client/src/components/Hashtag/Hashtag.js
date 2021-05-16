@@ -14,7 +14,12 @@ export class Hashtag extends Component {
     }
 
     async componentDidMount(){
-        const response = await axios.get(`http://localhost:5500/hashtag/resources`)
+        
+        const url_request =
+        //"http://localhost:5500/db-items";
+        "https://hashtag-ultimaesperanza.herokuapp.com/db-items";
+
+        const response = await axios.get(url_request)
         .then(response => { return response })
         .catch(error => console.log(error));
         this.setState({ 
