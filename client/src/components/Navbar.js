@@ -70,10 +70,13 @@ const NavMenu = styled.ul `
     margin-left: auto;
     background: transparent;
     opacity: 1;
-    transition: opacity 1s;
+    visibility: visible;
+    transition: visibility 0s linear 0s, opacity 1s;
 
     &.close{
         opacity: 0;
+        visibility: hidden;
+        transition: visibility 0s linear 300ms, opacity 1s;
         /* overflow: hidden; */
     }
 

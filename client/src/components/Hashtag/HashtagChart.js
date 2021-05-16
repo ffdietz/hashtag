@@ -4,8 +4,8 @@ import styled from 'styled-components'
 import * as d3 from 'd3';
 
 const getDate = dateString => {
-  const date = dateString.split(/[-_.]/);
-  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+  console.log(dateString);
+   return new Date(dateString);
 };
 
 export default function ImgChart( props ) {
@@ -36,14 +36,14 @@ export default function ImgChart( props ) {
 
   useEffect(() => {
     const svg = d3.select(svgRef.current)
-    const margin = ({top: 10, bottom: 10, right: 20, left: 20})
+    const margin = ({top: 10, bottom: 10, right: 20, left: 50})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    const chartWidth  = width  * 4; 
-    const chartHeight = height * 3;
-    const rectSize = 80;
+    let chartWidth  = width  * 4; 
+    let chartHeight = height * 3.2;
+    const rectSize = 60;
 
-    const initialZoom = d3.zoomIdentity.scale(0.21).translate((0.21 * chartWidth)/2 , height*1 );
+    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth)/2 , height * 1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
 
@@ -59,10 +59,10 @@ export default function ImgChart( props ) {
                       .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
 
     const timeScale = d3.scaleTime()
-                        .domain(
-                          [ d3.min(data, d => getDate(d.ig_uploaded_at)),
-                            d3.max(data, d => getDate(d.ig_uploaded_at))])
-                        .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
+                      .domain(
+                        [ d3.min(data, d => getDate(d.ig_uploaded_at)),
+                          d3.max(data, d => getDate(d.ig_uploaded_at))])
+                      .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
 
     const zoomed =  d3.zoom()
                       .scaleExtent([0.1, 15])
@@ -128,8 +128,8 @@ export default function ImgChart( props ) {
       </CanvasContainer>
 
       <ButtonContainer>
-        <Button id="timeline">time</Button>
         <Button id="ordinal">ordinal</Button>
+        <Button id="timeline">time</Button>
       </ButtonContainer>
     </HashtagChartContainer>
   );
