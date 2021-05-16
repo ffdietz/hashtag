@@ -37,12 +37,12 @@ const cloudData = async () => {
                     version:        resultData[i].version,
                     resource_type:  resultData[i].resource_type,
                     type:           resultData[i].type,
-                    downloaded_at:  resultData[i].created_at,
+                    created_at:     resultData[i].created_at,
                     bytes:          resultData[i].bytes,
                     width:          resultData[i].width,
                     height:         resultData[i].height,
                     url:            resultData[i].url,
-                    uploaded_at:    resultData[i].ig_uploaded_at,
+                    ig_uploaded_at: resultData[i].ig_uploaded_at,
                     image_description: '',
                     keywords: ''
                 })

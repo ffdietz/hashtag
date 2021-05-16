@@ -69,7 +69,7 @@ async function list_resources(results, next_cursor = null) {
               } else {
                   console.log("rate_limit_remaining " + res.rate_limit_remaining )
                   res.resources.forEach(function (resource) {
-                      resource.ig_uploaded_at = createDate(resource.public_id)
+                      resource.ig_uploaded_at = createDate(resource.public_id.slice(0,19));
                       results.push(resource);
                   });
                   if (res.next_cursor) {
@@ -85,8 +85,8 @@ async function list_resources(results, next_cursor = null) {
 };
 
 const createDate = dateString => {
-  const date = dateString.slice(0,19).split(/[-_.]/);
-  return new Date(date[0], date[1], date[2], date[3], date[4], date[5]);
+  const date = dateString.split(/[-_.]/);
+  return new Date(date[0], date[1] - 1, date[2], date[3], date[4], date[5]);
 };
 
 // https://cloudinary.com/blog/build_the_back_end_for_your_own_instagram_style_app_with_cloudinary
