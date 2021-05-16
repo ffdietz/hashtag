@@ -19,7 +19,11 @@ const CloudImageSchema = new Schema({
         ImageDescription: String,
         Keywords: String
     },
-    color: [ ]
+    colors: [{ String }],
+    predominant: {
+        google: [{ String }]
+    },
+    
 
     });
 
@@ -41,26 +45,10 @@ const cloud_request_model_edited =
     url: "http://res.cloudinary.com/dnpcf39vp/image/upload/v1617662096/2020-06-18_18.50.57_2334524738004511380_glaciargrey_xpgngq.jpg",
     secure_url: "https://res.cloudinary.com/dnpcf39vp/image/upload/v1617662096/2020-06-18_18.50.57_2334524738004511380_glaciargrey_xpgngq.jpg",
     next_cursor: "3def12a14a034d8fcad1eb2333d0e738849a8fcae5e5b4e714469e1e2d8602e5",
-    derived: [],
-    etag: "ce8d0482bbe91a461f6e695dcd51a247",
     image_metadata: {
-        SpecialInstructions: "FBMD23000969010000f1420000dc5d00003c6d000071ea00001e430100027b010066e0010029330200068a0200",
         ImageDescription: "Contamos regressar em outubro a Argentina, Chile: Transpatagónica e Parque Tierra del Fuego- Fascinante travessia da Patagónia percorrendo os seus mais emblemáticos parques naturais, destacando o Torres del Paine e o Glaciares, onde iremos apreciar uma Natureza possante que nos oferecerá panoramas de enorme beleza. O nosso percurso irá levar-nos ao extremo sul e a embrenhar-nos no Parque Nacional da Terra do Fogo. Leia mais: clique no link da Bio ou consulte rotasdovento.com Duração: 18 dias de viagem, 9 de caminhada, 2 de navegação, 1 de kayak, 7 noites a acampar, 11 noites de estalagem/hotel. . . . . . . . . . #rotasdovento #patagonia #tierradelfuego #torresdelpaine #elcalafate #elchalten #peritomoreno #greyglacier #glaciargrey #ushuaia #cerrotore #fitzroy #cerrofitzroy #buenosaires #puertonatales #lagogrey #lagonordenskjöld #cuernosdelpaine",
-        Artist: "",
-        UserComment: "Contamos regressar em outubro a Argentina, Chile: Transpatagónica e Parque Tierra del Fuego- Fascinante travessia da Patagónia percorrendo os seus mais emblemáticos parques naturais, destacando o Torres del Paine e o Glaciares, onde iremos apreciar uma Natureza possante que nos oferecerá panoramas de enorme beleza. O nosso percurso irá levar-nos ao extremo sul e a embrenhar-nos no Parque Nacional da Terra do Fogo. Leia mais: clique no link da Bio ou consulte rotasdovento.com Duração: 18 dias de viagem, 9 de caminhada, 2 de navegação, 1 de kayak, 7 noites a acampar, 11 noites de estalagem/hotel. . . . . . . . . . #rotasdovento #patagonia #tierradelfuego #torresdelpaine #elcalafate #elchalten #peritomoreno #greyglacier #glaciargrey #ushuaia #cerrotore #fitzroy #cerrofitzroy #buenosaires #puertonatales #lagogrey #lagonordenskjöld #cuernosdelpaine",
-        XPComment: "Contamos regressar em outubro a Argentina, Chile: Transpatagónica e Parque Tierra del Fuego- Fascinante travessia da Patagónia percorrendo os seus mais emblemáticos parques naturais, destacando o Torres del Paine e o Glaciares, onde iremos apreciar uma Natureza possante que nos oferecerá panoramas de enorme beleza. O nosso percurso irá levar-nos ao extremo sul e a embrenhar-nos no Parque Nacional da Terra do Fogo. Leia mais: clique no link da Bio ou consulte rotasdovento.com Duração: 18 dias de viagem, 9 de caminhada, 2 de navegação, 1 de kayak, 7 noites a acampar, 11 noites de estalagem/hotel. . . . . . . . . . #rotasdovento #patagonia #tierradelfuego #torresdelpaine #elcalafate #elchalten #peritomoreno #greyglacier #glaciargrey #ushuaia #cerrotore #fitzroy #cerrofitzroy #buenosaires #puertonatales #lagogrey #lagonordenskjöld #cuernosdelpaine",
-        XPAuthor: "",
         XPKeywords: "rotasdovento;patagonia;tierradelfuego;torresdelpaine;elcalafate;elchalten;peritomoreno;greyglacier;glaciargrey;ushuaia;cerrotore;fitzroy;cerrofitzroy;buenosaires;puertonatales;lagogrey;lagonordenskjöld;cuernosdelpaine",
-        JFIFVersion: "1.01",
-        ResolutionUnit: "None",
-        XResolution: "1",
-        YResolution: "1",
-        Colorspace: "RGB",
-        DPI: "0"
     },
-    illustration_score: 0,
-    semi_transparent: false,
-    grayscale: false,
     colors: [
         [
         "#E0F7FB",
@@ -211,15 +199,9 @@ const cloud_request_model_edited =
         "red",
         0.7
         ]
-        ]
+    ]
     },
-    pages: 1,
-    usage: { },
-    original_filename: "2020-06-18 18.50.57 2334524738004511380_glaciargrey",
-    rate_limit_allowed: 500,
-    rate_limit_reset_at: "2021-05-14T11:00:00.000Z",
-    rate_limit_remaining: 498
-    }
+}
 
 const cloud_request_model_original = 
 {

@@ -17,7 +17,7 @@ const debug        = require('debug')(`${app_name}:${path.basename(__filename).s
 const app = express();
 
 //Config Mongo connection
-require('./configs/db.config');
+require('./configs/database-setup.config');
 
 app.use(cors());
 
