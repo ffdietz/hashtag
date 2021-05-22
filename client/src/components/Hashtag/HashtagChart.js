@@ -4,8 +4,7 @@ import styled from 'styled-components'
 import * as d3 from 'd3';
 
 const getDate = dateString => {
-  console.log(dateString);
-   return new Date(dateString);
+  return new Date(dateString);
 };
 
 export default function ImgChart( props ) {
@@ -14,7 +13,7 @@ export default function ImgChart( props ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(true);
+  const [ viewState, setViewState ] = useState(false);
 
   useEffect(() => {
     d3
@@ -41,11 +40,14 @@ export default function ImgChart( props ) {
 
     let chartWidth  = width  * 4; 
     let chartHeight = height * 3.2;
-    const rectSize = 60;
+    const rectSize = 40;
 
     const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth)/2 , height * 1 );
     d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
     d3.zoom().scaleTo(svg, initialZoom.k);
+
+    const min = d3.min(data, d => getDate(d.ig_uploaded_at));
+    console.log(min);
 
     const nodesGroup = svg.selectAll("rect");
 
@@ -65,15 +67,15 @@ export default function ImgChart( props ) {
                       .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
 
     const zoomed =  d3.zoom()
-                      .scaleExtent([0.1, 15])
+                      .scaleExtent([0.1, 50])
                       .translateExtent([ 
                         [ 0, 0 ], 
                         [ chartWidth , chartHeight] ])
                       .wheelDelta((event) => {
-                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 2000})
+                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 200})
                       .on("zoom", (event) => {
+                        console.log(event);
                         nodesGroup
-                          // .transition().duration(10)
                           .attr("transform", event.transform.toString())
                       });
 
@@ -83,7 +85,7 @@ export default function ImgChart( props ) {
         .attr("x", (d) => timeScale(getDate(d.ig_uploaded_at)))
       }
 
-    function ordinal() {
+    function bytesSorting() {
       nodesGroup
         .transition().duration(5000)
         .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
@@ -93,7 +95,7 @@ export default function ImgChart( props ) {
       .on('click', () => {  timeLine(); })
 
     d3.select("#ordinal")
-      .on('click', () => {  ordinal(); })
+      .on('click', () => {  bytesSorting(); })
 
     nodesGroup
       .data(data)
@@ -110,7 +112,7 @@ export default function ImgChart( props ) {
       .attr("width",  rectSize )
       .attr("height", rectSize )
       .transition().duration(5000)
-      .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
       .transition().duration(5000)
       .attr("y", (d) => yScale(d.bytes) - rectSize/2 )
 
@@ -130,6 +132,7 @@ export default function ImgChart( props ) {
       <ButtonContainer>
         <Button id="ordinal">ordinal</Button>
         <Button id="timeline">time</Button>
+        <Button>{data.lenght-1}</Button>
       </ButtonContainer>
     </HashtagChartContainer>
   );

@@ -3,10 +3,11 @@ import { Switch, Route } from "react-router-dom";
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import ProjectDescription     from './ProjectDescription';
+import ProjectAbout     from './ProjectAbout';
 import Collective  from './Collective'
 import Hashtag  from './Hashtag/Hashtag'
 import Contact  from './Contact'
+import Home  from './Home'
 // import AboutProject     from './AboutProject'
 
 export class Main extends Component {
@@ -22,7 +23,8 @@ export class Main extends Component {
                             >
                             < Switch location={ location } >
                                 <Route exact path= '/'  component={ Hashtag } />
-                                <Route exact path= '/hashtag'   component={ ProjectDescription } />
+                                <Route exact path= '/home'  component={ Home } />
+                                <Route exact path= '/hashtag'   component={ ProjectAbout } props={'true'}/>
                                 <Route exact path= '/collective'    component={ Collective } />
                                 <Route exact path= '/contact'   component={ Contact } />
                             </Switch>
