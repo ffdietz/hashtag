@@ -33,13 +33,13 @@ router.get('/api/:quantity', async (req, res) => {
     return res.json( images );
   });
 
-router.get('/resources', async (req, res) => {
+router.get('/cloud-resources', async (req, res) => {
   const results = [];
   await list_resources(results);
   return res.status(200).json(results);
 });
 
-router.get('/db-items', (req, res) => {
+router.get('/database-resources', (req, res) => {
   CloudImage.find({  })
   .then((data) => {
       res.json(data);

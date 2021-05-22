@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
 
-export class AboutProject extends Component {
+export class ProjectAbout extends Component {
 
     paragraph(p) {
         return ( 
@@ -26,7 +26,7 @@ export class AboutProject extends Component {
     }
 }
 
-export default AboutProject
+export default ProjectAbout
 
 const AboutContainer = styled.div`
     width: 100vw;
@@ -46,7 +46,6 @@ const BiographyText = styled.p `
     font-size: clamp(10px, 1.6rem, 20px);
     line-height: clamp(11px, 1.8rem, 22px);
     color: var(--font-color);
-
 `
 const Biography = 
     `¿Puede una obra de artes mediales servir como herramienta científica?, ¿puede un cúmulo de fotografías de carácter turístico entregar información del calentamiento global? ¿pueden nuestros recuerdos fotográficos aportar al conocimiento y comportamiento de masas de hielo milenario?. 

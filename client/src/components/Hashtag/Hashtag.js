@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import HashtagChart from './HashtagChart'
+import HashtagChart from './HashtagChart';
+import Home from '../Home';
 
 export class Hashtag extends Component {
 
@@ -8,7 +9,6 @@ export class Hashtag extends Component {
         super(props);
         this.state = {
             gallery: [],
-            quantity: 1,
             init: 0,
         }
     }
@@ -16,8 +16,9 @@ export class Hashtag extends Component {
     async componentDidMount(){
         
         const url_request =
-        //"http://localhost:5500/db-items";
-        "https://hashtag-ultimaesperanza.herokuapp.com/db-items";
+        "http://localhost:5500/database-resources";
+        // "http://localhost:5500/cloud-resources";
+        // "https://hashtag-ultimaesperanza.herokuapp.com/db-items";
 
         const response = await axios.get(url_request)
         .then(response => { return response })
@@ -33,7 +34,10 @@ export class Hashtag extends Component {
             <>
                 {
                     this.state.init ?
-                    <HashtagChart data={ this.state.gallery } />
+                    <>
+                        {/* <Home /> */}
+                        <HashtagChart data={ this.state.gallery } />
+                    </>
                     :
                     <div></div>
                 }
@@ -43,6 +47,3 @@ export class Hashtag extends Component {
 }
 
 export default Hashtag
-
-
-

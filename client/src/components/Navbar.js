@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-    const [isActive, setActive] = useState(true);
+    const [isActive, setActive] = useState(false);
 
     return (
 

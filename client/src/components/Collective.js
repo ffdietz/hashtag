@@ -45,8 +45,6 @@ const BiographyText = styled.p `
     font-size: clamp(10px, 1.6rem, 20px);
     line-height: clamp(11px, 1.8rem, 22px);
     color: var(--font-color);
-
-
 `
 const Biography = 
     `Ultimaesperanza es un colectivo artístico dirigido por Sandra Ulloa y Nataniel Alvarez que nace en  2004 interesado en explorar a través de distintos lenguajes artísticos y  medios tecnológicos (análogos y digitales), las particularidades de la ruralidad magallánica; del territorio sub-antártico y su relación con la memoria colectiva, historia e identidad local. 
