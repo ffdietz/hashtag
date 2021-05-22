@@ -1,23 +1,34 @@
-const mongoose = require("mongoose");
 require('dotenv').config();
+const mongoose = require("mongoose");
 const CloudImage = require("./models/CloudImage");
 const axios = require("axios");
 let saveCounter = 0;
 
-const db_uri = process.env.DB_URI;
+function beginConnection(uri){
+    mongoose
+        .connect(uri, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        })
+        .then(x => console.log(`CONNECTED TO MONGODB - CLUSTER: "${x.connections[0].name}"`))
+        .catch(err => console.error('ERROR CONNECTING TO MONGO', err.message));
+}
 
-mongoose
-    .connect(db_uri, {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
-    .then(x => console.log(`Connected to Mongo - Database name: "${x.connections[0].name}"`))
-    .catch(err => console.error('Error connecting to Mongo', err.message));
+function deleteCollection(collection){
+    mongoose.connection.on('error', console.error);
+    mongoose.connection.once('open', function () {
+        mongoose.connection.dropCollection(collection, function (err, result) {
+            if (err) {
+                console.log("ERROR DELETE COLLECTION");
+            } else {
+                console.log(`COLLECTION ${collection} DELETED SUCCESSFULLY`);
+            }
+        });
+    });
+}
 
-const url = "http://localhost:5500/resources";
-
-const getData = () => {
+const gettingDataFrom = (url) => {
     try {
         return axios.get(url)
     } catch (error) {
@@ -25,8 +36,8 @@ const getData = () => {
     }
 }
 
-const cloudData = async () => {
-    const data = getData()
+const updating = async (url) => {
+    const data = gettingDataFrom(url)
         .then(response => {
             const resultData = response.data;
             for(let i = 0 ; i < resultData.length; i++){
@@ -47,13 +58,12 @@ const cloudData = async () => {
                     keywords: ''
                 })
                 cloudImage.save ( () => {
-                    console.log("saved" + cloudImage)
+                    if(showResults)console.log("SAVED" + cloudImage)
                     saveCounter++;
                 
                     if (saveCounter === resultData.length) {
-                    console.log(saveCounter);
                         mongoose.disconnect()
-                        .then(() => console.log("saved succesfully and mongodb disconnected"))
+                        .then(() => console.log(saveCounter + " ITEMS SAVED SUCCESFULLY - MONGODB DISCONNECTED"))
                         .catch(error => console.log(error));
                         }
                 });
@@ -62,4 +72,11 @@ const cloudData = async () => {
         .catch(error => { console.log(error)    })
 }
 
-cloudData()
+
+const db_uri = process.env.DB_URI;
+const url_consulted = "http://localhost:5500/cloud-resources";
+const showResults = false;
+
+beginConnection(db_uri);
+deleteCollection("cloudimages");
+updating(url_consulted);
