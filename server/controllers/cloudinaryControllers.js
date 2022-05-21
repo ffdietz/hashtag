@@ -2,21 +2,20 @@ const { cloudinary } = require('../configs/cloudinary-setup.config');
 require('../configs/database.config');
 
 
-// export const metadata = async (req, res, next) => {
-//   req.data = await cloudinary.api.resource( req.params.id ,
-//     {
-//       colors: true,
-//       image_metadata:true,
-//     })
-//     .then(res => { return res })
-//     .catch(err => console.error(err));
-//     next();
-//     // return res.json( images );
-// }
+exports.metadata = async (req, res, next) => {
+  const images = await cloudinary.api
+  .resource( req.params.id ,
+    {
+      colors: true,
+      image_metadata:true,
+    })
+    .then(res => { return res })
+    .catch(err => console.error(err));
+  return res.json( images );
+}
 
 exports.list_all_resources = async function ( req, res) {
-  const results = [];
-  
+  const results = [];  
   const list_all = async (results, next_cursor = null ) => { 
     await cloudinary.api.resources(
     {
@@ -53,7 +52,7 @@ exports.quantity = async function (req, res) {
 };
 
 exports.test = function(req, res) {
-  res.send("controller connected");
+  res.send("cloudinary controllers connected");
 }
 
 const createDate = dateString => {
