@@ -1,34 +1,54 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom'
 import styled from "styled-components";
 
-export class Home extends Component {
-    render() {
-        return (
-            <HomeContainer >
-                <div>
-                <Title>#GLACIARGREY</Title>
-                <h2>¿pueden nuestros recuerdos fotográficos aportar al conocimiento y comportamiento de masas de hielo milenario?</h2>
-                </div>
-            </HomeContainer>
-        )
-    }
+export default function Home() {
+  return (
+    <HomeContainer >
+      <Headline>
+        <h1>#GLACIARGREY</h1>
+        <p>
+          ¿pueden nuestros recuerdos fotográficos <br/> 
+          aportar al conocimiento y comportamiento de masas de hielo milenario?
+        </p>
+        <GoToButton to="/chart" >ir a la visualización</GoToButton>
+      </Headline>
+    </HomeContainer>
+  )
 }
 
-export default Home
-
 const HomeContainer = styled.div `
-    width: 100vw;
-    height: 100vh;
-    display: grid;
-    align-items: center;
-    justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+const Headline = styled.div`
+  padding-top: 5vh;
+  color: var(--font-color);
+  
+  h1{
+    font-size: 6rem;
     color: var(--font-color);
-    background: transparent;
-`;
-
-const Title = styled.h1 `
-    font-size: 8rem;
-    color: var(--font-color);
-    margin: 0;
+    margin: auto;
     padding: 0;
+  }
+  p{
+    font-size: 1.5rem;
+  }
+`
+
+const GoToButton = styled(Link)`
+  position: absolute;
+  background-color: transparent;
+  border-radius: 5px;
+  color: turquoise;
+  text-transform: uppercase;
+  padding: 25px 15px;
+  text-decoration: none;
+  
+  :hover{
+    background: rgba(0,255,255,0.2);
+  }
 `

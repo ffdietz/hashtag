@@ -11,19 +11,16 @@ function beginConnection(uri){
             useNewUrlParser: true,
             useUnifiedTopology: true
         })
-        .then(x => console.log(`CONNECTED TO MONGODB - CLUSTER: "${x.connections[0].name}"`))
-        .catch(err => console.error('ERROR CONNECTING TO MONGO', err.message));
+        .then( x => console.log(`CONNECTED TO MONGODB - CLUSTER: "${x.connections[0].name}"`))
+        .catch( err => console.error('ERROR CONNECTING TO MONGO', err.message));
 }
 
 function deleteCollection(collection){
     mongoose.connection.on('error', console.error);
     mongoose.connection.once('open', function () {
         mongoose.connection.dropCollection(collection, function (err, result) {
-            if (err) {
-                console.log("ERROR DELETE COLLECTION");
-            } else {
-                console.log(`COLLECTION ${collection} DELETED SUCCESSFULLY`);
-            }
+            if (err){ console.error("ERROR DELETE COLLECTION"); }
+            else    { console.log(`COLLECTION ${collection} DELETED SUCCESSFULLY`); }
         });
     });
 }
@@ -72,10 +69,9 @@ const updating = async (url) => {
         .catch(error => { console.log(error)    })
 }
 
-
 const db_uri = process.env.DB_URI;
 const url_consulted = "http://localhost:5500/cloud-resources";
-const showResults = false;
+const showResults = true;
 
 beginConnection(db_uri);
 deleteCollection("cloudimages");

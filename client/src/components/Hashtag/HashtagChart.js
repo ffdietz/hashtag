@@ -12,8 +12,15 @@ export default function ImgChart( props ) {
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);  
 
-  const [ data ] = useState( props.data );
-  const [ viewState, setViewState ] = useState(false);
+  const [ data, setData ] = useState([]);
+  const [ viewState, setViewState ] = useState(true);
+
+  useEffect(() => {
+    const dataMounting = async() => {
+      setData(props.data);
+    }
+    dataMounting();
+  }, [data]);
 
   useEffect(() => {
     d3
@@ -38,46 +45,54 @@ export default function ImgChart( props ) {
     const margin = ({top: 10, bottom: 10, right: 20, left: 50})
     let { width, height } = dimensions || wrapperRef.current.getBoundingClientRect();
 
-    let chartWidth  = width  * 4; 
-    let chartHeight = height * 3.2;
+    const chartWidth  = width  * 4; 
+    const chartHeight = height * 3.2;
+    const nodesGroup = svg.selectAll("rect");
     const rectSize = 40;
 
-    const initialZoom = d3.zoomIdentity.scale(0.2).translate((0.2 * chartWidth)/2 , height * 1 );
-    d3.zoom().translateTo(svg, initialZoom.x, initialZoom.y);
-    d3.zoom().scaleTo(svg, initialZoom.k);
+    const initialZoom = d3.zoomIdentity
+      .scale(0.2)
+      .translate((0.2 * chartWidth)/2 , height * 1 );
 
-    const min = d3.min(data, d => getDate(d.ig_uploaded_at));
-    console.log(min);
+    d3.zoom()
+    .translateTo(svg, initialZoom.x, initialZoom.y);
 
-    const nodesGroup = svg.selectAll("rect");
+    d3.zoom()
+    .scaleTo(svg, initialZoom.k);
 
     const xScale =  d3.scaleBand()
-                      .domain( data.map((d) => d.bytes ))
-                      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize]);
+      .domain( data.map((d) => d.bytes ))
+      .range([ margin.left + rectSize, chartWidth - margin.right- rectSize])
+      .padding(rectSize);
 
     const yScale =  d3.scaleLinear()
-                      .domain([ d3.min(data, (d) => d.bytes), 
-                                d3.max(data, (d) => d.bytes) ]) 
-                      .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
+      .domain([ d3.min(data, (d) => d.bytes), 
+                d3.max(data, (d) => d.bytes) ]) 
+      .range([chartHeight - margin.bottom - rectSize, margin.top + rectSize]);
 
     const timeScale = d3.scaleTime()
-                      .domain(
-                        [ d3.min(data, d => getDate(d.ig_uploaded_at)),
-                          d3.max(data, d => getDate(d.ig_uploaded_at))])
-                      .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
+      .domain(
+        [ d3.min(data, d => getDate(d.ig_uploaded_at)),
+          d3.max(data, d => getDate(d.ig_uploaded_at))])
+      .range([ margin.right + rectSize, chartWidth - margin.left - rectSize ]);
 
     const zoomed =  d3.zoom()
-                      .scaleExtent([0.1, 50])
-                      .translateExtent([ 
-                        [ 0, 0 ], 
-                        [ chartWidth , chartHeight] ])
-                      .wheelDelta((event) => {
-                        return -event.deltaY * (event.deltaMode ? 120 : 1) / 200})
-                      .on("zoom", (event) => {
-                        console.log(event);
-                        nodesGroup
-                          .attr("transform", event.transform.toString())
-                      });
+      .scaleExtent([0.1, 20])
+      .translateExtent([ 
+        [ 0, 0 ], 
+        [ chartWidth , chartHeight] ])
+      .wheelDelta((event) => {
+        return -event.deltaY * (event.deltaMode ? 120 : 1) / 200})
+      .on("zoom", (event) => {
+        console.log("zoom: " + event);
+        nodesGroup
+          .attr("transform", event.transform.toString())}
+      );
+
+      // const simulation = d3.forceSimulation(nodesGroup)
+      // .force('x', d3.forceX(width/2).strength(0.5))
+      // .force('y', d3.forceY(width/2).strength(0.5))
+      // .on('tick', ticked);
 
     function timeLine() {
       nodesGroup
@@ -91,16 +106,16 @@ export default function ImgChart( props ) {
         .attr("x", (d) => xScale(d.bytes) - rectSize/2 )
       }
 
-    d3.select("#timeline")
-      .on('click', () => {  timeLine(); })
-
-    d3.select("#ordinal")
-      .on('click', () => {  bytesSorting(); })
-
     nodesGroup
       .data(data)
       .join("rect")
       .attr("class", "node")
+      .attr("width",  rectSize )
+      .attr("height", rectSize )
+      .transition().duration(5000)
+      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
+      .transition().duration(5000)
+      .attr("y", (d) => yScale(d.bytes) - rectSize/2 )
       .attr("fill", (d) => {
         if(!viewState)  return "none" 
         else  return `url( #${d.asset_id} )`
@@ -109,22 +124,51 @@ export default function ImgChart( props ) {
         if(viewState)  return "none" 
         else  return "turquoise"
       })
-      .attr("width",  rectSize )
-      .attr("height", rectSize )
-      .transition().duration(5000)
-      .attr("x", (d) => xScale(d.bytes) - rectSize/2)
-      .transition().duration(5000)
-      .attr("y", (d) => yScale(d.bytes) - rectSize/2 )
 
+    // function ticked() {
+    //   nodesGroup
+    //   .data(data)
+    //   .join("rect")
+    //   .attr("class", "node")
+    //   .attr("width",  rectSize )
+    //   .attr("height", rectSize )
+    //   .transition().duration(5000)
+    //   .attr("x", (d) => xScale(d.bytes) - rectSize/2)
+    //   .transition().duration(5000)
+    //   .attr("y", (d) => yScale(d.bytes) - rectSize/2 )
+    //   .attr("fill", (d) => {
+    //     if(!viewState)  return "none" 
+    //     else  return `url( #${d.asset_id} )`
+    //   })  //id name of pattern
+    //   .attr("stroke", () => {
+    //     if(viewState)  return "none" 
+    //     else  return "turquoise"
+    //   })
+    // }
+
+    // ticked();
+    // simulation.nodes(nodesGroup)
+    // .on('tick', ticked)
+
+    //INITIAL ZOOM STATE
     nodesGroup
       .attr("transform", initialZoom);
 
+    //ZOON FUNCTION
     svg.call(zoomed)
+
+    //HANDLE BUTTON EVENT
+    d3.select("#timeline")
+      .on('click', () => {  timeLine(); })
+
+    d3.select("#ordinal")
+      .on('click', () => {  bytesSorting(); })
 
 }, [ dimensions, data, viewState ]);
 
   return (
     <HashtagChartContainer>
+
       <CanvasContainer ref={wrapperRef} >
         <SVGCanvas ref={svgRef}/>
       </CanvasContainer>
@@ -132,7 +176,6 @@ export default function ImgChart( props ) {
       <ButtonContainer>
         <Button id="ordinal">ordinal</Button>
         <Button id="timeline">time</Button>
-        <Button>{data.lenght-1}</Button>
       </ButtonContainer>
     </HashtagChartContainer>
   );

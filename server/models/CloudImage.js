@@ -18,7 +18,8 @@ const CloudImageSchema = new Schema({
     image_description: String,
     keywords: String,
     colors: [{ String }],
-    predominant_color: [{ String }]
+    predominant_color: [{ String }],
+    image_metadata: [{ String }]
 });
 
 const CloudImage = mongoose.model('CloudImage', CloudImageSchema);
