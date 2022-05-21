@@ -26,4 +26,3 @@ yarn-error.log*
 TODO
 client/.env
 server/.env
-seed.js

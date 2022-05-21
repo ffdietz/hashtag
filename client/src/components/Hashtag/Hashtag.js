@@ -1,49 +1,37 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect }from 'react';
+import styled from 'styled-components';
 import axios from 'axios';
 import HashtagChart from './HashtagChart';
-import Home from '../Home';
 
-export class Hashtag extends Component {
+export default function Hashtag() {
+const [gallery, setGallery] = useState('');
+const [loading, setLoading] = useState(true);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            gallery: [],
-            init: 0,
-        }
-    }
+useEffect( () => {
+  const getGallery = async() => {
+    await axios.get(URL_REQUEST)
+      .then(res => {
+        setGallery(res.data);
+        setLoading(false);
+      })
+      .catch(error => console.error(error));
+  }
+  getGallery();
+}, [] );
 
-    async componentDidMount(){
-        
-        const url_request =
-        "http://localhost:5500/database-resources";
-        // "http://localhost:5500/cloud-resources";
-        // "https://hashtag-ultimaesperanza.herokuapp.com/db-items";
-
-        const response = await axios.get(url_request)
-        .then(response => { return response })
-        .catch(error => console.log(error));
-        this.setState({ 
-            gallery: response.data,
-            init:1
-        }) 
-    }
-
-    render(){
-        return (
-            <>
-                {
-                    this.state.init ?
-                    <>
-                        {/* <Home /> */}
-                        <HashtagChart data={ this.state.gallery } />
-                    </>
-                    :
-                    <div></div>
-                }
-            </>
-        )
-    }
+return (
+  <VisualizationWrapper>
+    { loading && <p>loading</p> }
+    { !loading && <HashtagChart data={ gallery } /> }
+  </VisualizationWrapper>
+  )
 }
 
-export default Hashtag
+const VisualizationWrapper = styled.div`
+  position: static;
+`
+
+const URL_REQUEST =
+"http://localhost:5500/database-resources";
+// "http://localhost:5500/cloud-resources";
+// "https://hashtag-ultimaesperanza.herokuapp.com/db-items";

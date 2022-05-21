@@ -3,28 +3,24 @@ import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
-    const [isActive, setActive] = useState(false);
+  const [isActive, setActive] = useState(false);
 
-    return (
-
-        <NavBarContainer>
-            <NavWrapper>
-                <NavLogo to="/"> Colectivo<br/>UltimaEsperanza </NavLogo>
-
-                <NavMenu className={ isActive ? 'nav-menu close' : 'nav-menu' }>
-                    <li> <NavLinkItem exact path to="/" > home </NavLinkItem> </li>
-                    <li> <NavLinkItem exact path to="/hashtag" > hashtag </NavLinkItem> </li>
-                    <li> <NavLinkItem exact path to="/collective" > colectivo </NavLinkItem> </li>
-                    <li> <NavLinkItem exact path to="/contact" > contact </NavLinkItem> </li>
-                </NavMenu>
-
-                <NavIcon className={ isActive ? 'fas fa-bars active' : 'fas fa-times'}
-                    onClick={ ()=> { setActive( !isActive ) } }
-                />
-            </NavWrapper>
-
-        </NavBarContainer>
-    )
+  return (
+  <NavBarContainer>
+    <NavWrapper>
+      <NavLogo to="/"> Colectivo<br/>UltimaEsperanza </NavLogo>
+      <NavMenu className={ isActive ? 'nav-menu close' : 'nav-menu' }>
+        <li> <NavLinkItem exact path to="/"> home </NavLinkItem> </li>
+        <li> <NavLinkItem exact path to="/hashtag" > hashtag </NavLinkItem> </li>
+        <li> <NavLinkItem exact path to="/collective" > colectivo </NavLinkItem> </li>
+        <li> <NavLinkItem exact path to="/contact" > contact </NavLinkItem> </li>
+      </NavMenu>
+      <NavIcon className={ isActive ? 'fas fa-bars active' : 'fas fa-times'}
+        onClick={ ()=> { setActive( !isActive ) } }
+      />
+    </NavWrapper>
+  </NavBarContainer>
+  )
 }
 
 export default NavBar;
