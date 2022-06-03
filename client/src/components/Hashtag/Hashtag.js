@@ -6,9 +6,11 @@ import styled from 'styled-components';
 import axios from 'axios';
 import HashtagChart from './HashtagChart';
 
-export default function Hashtag() {
+export default function Hashtag( activeChart ) {
 const [gallery, setGallery] = useState('');
 const [loading, setLoading] = useState(true);
+
+console.log(activeChart)
 
 useEffect( () => {
   const getGallery = async() => {
@@ -25,15 +27,14 @@ useEffect( () => {
 return (
   <VisualizationWrapper>
     { loading && <p>loading</p> }
-    { !loading && <HashtagChart data={ gallery } /> }
+    { !loading && activeChart && <HashtagChart data={ gallery } /> }
   </VisualizationWrapper>
   )
 }
 
 const VisualizationWrapper = styled.div`
   margin-top: -50%;
-  z-index: 1;
-  /* z-index: 0; */
+  /* z-index: {{ activeChart? 1 : 0}}; */
   position: static;
 `
 
