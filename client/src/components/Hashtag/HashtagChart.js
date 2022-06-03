@@ -13,7 +13,7 @@ export default function ImgChart( props ) {
   const dimensions = useResizeObserver(wrapperRef);  
 
   const [ data, setData ] = useState([]);
-  const [ viewState, setViewState ] = useState(true);
+  const [ viewState, setViewState ] = useState(false);
 
   useEffect(() => {
     const dataMounting = async() => {
@@ -84,7 +84,7 @@ export default function ImgChart( props ) {
       .wheelDelta((event) => {
         return -event.deltaY * (event.deltaMode ? 120 : 1) / 200})
       .on("zoom", (event) => {
-        console.log("zoom: " + event);
+        // console.log("zoom: " + event);
         nodesGroup
           .attr("transform", event.transform.toString())}
       );

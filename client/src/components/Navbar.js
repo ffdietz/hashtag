@@ -29,6 +29,7 @@ const NavBarContainer = styled.nav `
     width: 100vw;
     height: var(--navbar-height);
     position: fixed;
+    z-index: 2;
 
     color: var(--font-color);
     background: transparent;

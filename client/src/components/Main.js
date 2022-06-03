@@ -1,49 +1,60 @@
-import React, { Component } from 'react'
+import React, { useEffect, useState }  from 'react'
 import { Switch, Route } from "react-router-dom";
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
-import Project from './Project';
-import Collective   from './Collective'
-import Hashtag      from './Hashtag/Hashtag'
-import Contact      from './Contact'
-import Home         from './Home'
-// import AboutProject     from './AboutProject'
+import Project    from './Project';
+import Collective from './Collective'
+import Hashtag    from './Hashtag/Hashtag'
+import Contact    from './Contact'
+import Home       from './Home'
 
-export class Main extends Component {
-  render() {
-    return (
-      <MainContainer>
-        <Route render={({location}) => (
-          <TransitionGroup>
-            <CSSTransition
-              key={ location.key }
-              timeout={ 1000 }
-              classNames="fade"
-              >
-              <Switch location={ location } >
-                <Route exact path='/'           component={ Home } />
-                <Route exact path='/chart'      component={ Hashtag } />
-                <Route exact path='/hashtag'    component={ Project }/>
-                <Route exact path='/collective' component={ Collective } />
-                <Route exact path='/contact'    component={ Contact } />
-              </Switch>
-            </CSSTransition>
-          </TransitionGroup>
-        )} />
-      </MainContainer>
-    )
-  }
+export default function Main(props){
+  const [assets, setAssets] = useState('');
+
+  useEffect( () => {
+    // console.log(props);
+    // const getAssets = async() => {
+    //       console.log(props)
+    //       }
+    //       // setAssets(props.data); 
+    // }
+    // getAssets();
+  }, [] );
+  return (
+    <MainContainer>
+      <Route render={({location}) => (
+        <TransitionGroup>
+          <CSSTransition
+            key={ location.key }
+            timeout={ 1000 }
+            classNames="fade"
+          >
+            <Switch location = { location } >
+              <Route exact path = '/'           component = { Home } />
+              {/* <Route exact path = '/chart'      component = { Hashtag } props={ assets } /> */}
+              <Route exact path = '/hashtag'    component = { Project } />
+              <Route exact path = '/collective' component = { Collective } />
+              <Route exact path = '/contact'    component = { Contact } />
+            </Switch>
+          </CSSTransition>
+        </TransitionGroup>
+      )} />
+    </MainContainer>
+  )
 }
 
-export default Main
-
 const MainContainer = styled.div `
+    width: 100vw;
     height: 100vh;
     top: var(--navbar-height);
+    background: transparent;
     left: 0;
     right: 0;
-    overflow: hidden;
+    overflow-y: hidden;
+    
+    z-index: 1;
+
     .fade-appear,
     .fade-enter {
         opacity: 0;
@@ -52,10 +63,12 @@ const MainContainer = styled.div `
     .fade-appear-active,
     .fade-enter.fade-enter-active {
         opacity: 1;
+        z-index: -1;
         transition: opacity 600ms linear 500ms;
     }
     .fade-exit {
         opacity: 1;
+        z-index: -1;
     }
     .fade-exit.fade-exit-active {
         opacity: 0;
