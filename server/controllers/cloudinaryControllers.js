@@ -1,8 +1,7 @@
 const { cloudinary } = require('../configs/cloudinary-setup.config');
 require('../configs/database.config');
 
-
-exports.metadata = async (req, res, next) => {
+exports.metadata_all = async (req, res) => {
   const images = await cloudinary.api
   .resource( req.params.id ,
     {
@@ -14,7 +13,19 @@ exports.metadata = async (req, res, next) => {
   return res.json( images );
 }
 
-exports.list_all_resources = async function ( req, res) {
+exports.metadata = async (req, res) => {
+  const images = await cloudinary.api
+  .resource( req.params.id ,
+    {
+      colors: true,
+      image_metadata:true,
+    })
+    .then(res => { return res })
+    .catch(err => console.error(err));
+  return res.json( images );
+}
+
+exports.list_all_assets = async ( req, res) => {
   const results = [];  
   const list_all = async (results, next_cursor = null ) => { 
     await cloudinary.api.resources(
@@ -38,7 +49,7 @@ exports.list_all_resources = async function ( req, res) {
   return res.json(results);
 };
 
-exports.quantity = async function (req, res) {
+exports.quantity = async (req, res) => {
   const images = await cloudinary.api.resources(
     {
       resource_type: "image",
@@ -51,11 +62,11 @@ exports.quantity = async function (req, res) {
   return res.json( images )
 };
 
-exports.test = function(req, res) {
-  res.send("cloudinary controllers connected");
+exports.test = (req, res) => { 
+  return res.json( 'cloudinary controllers connected' );
 }
 
-const createDate = dateString => {
+const createDate = ( dateString ) => {
   const date = dateString.split(/[-_.]/);
   return new Date(date[0], date[1] - 1, date[2], date[3], date[4], date[5]);
 };

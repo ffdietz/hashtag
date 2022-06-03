@@ -8,15 +8,19 @@ router.get('/',
   cloudinary_controllers.test);
 
 /* by quantity */
-router.get('/quantity/:quantity', 
+router.get('/quantity=:quantity', 
   cloudinary_controllers.quantity);
 
 /* list all resources */
-router.get('/list-all', 
-  cloudinary_controllers.list_all_resources);
+router.get('/all-assets', 
+  cloudinary_controllers.list_all_assets);
 
 /* request metadata */
-router.get('/metadata/:id', 
+router.get('/metadata=:id', 
   cloudinary_controllers.metadata);
+
+/* request ALL metadata */
+router.get('/metadata-all', 
+  cloudinary_controllers.metadata_all);
 
 module.exports = router;

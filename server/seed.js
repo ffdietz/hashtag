@@ -70,7 +70,7 @@ const updating = async (url) => {
 }
 
 const db_uri = process.env.DB_URI;
-const url_consulted = "http://localhost:5500/cloud-resources";
+const url_consulted = "http://localhost:5500/cloudinary/all-assets";
 const showResults = true;
 
 beginConnection(db_uri);

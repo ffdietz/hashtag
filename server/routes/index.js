@@ -18,20 +18,3 @@ router.get('/', cloudinary_controllers.test );
 
 
 module.exports = router;
-
-
-//construir una function async to get metadata and request it as a middleware
-
-
-// router.get('/cloud-resources/color/:id', async (req, res) => {
-//   const images = await cloudinary.api
-//   .resource( req.params.id ,
-//     {
-//       colors: true,
-//       image_metadata:true,
-//     })
-//     .then(res => { return res })
-//     .catch(err => console.error(err));
-//   return res.json( images );
-// }
-// );
