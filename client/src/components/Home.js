@@ -1,13 +1,8 @@
-import React, { useState} from 'react';
-import { Link } from 'react-router-dom'
+import React from 'react';
+// import { Link } from 'react-router-dom'
 import styled from "styled-components";
 
-export default function Home({ setActiveChart}) {
-
-  const handleClick = () =>{
-    console.log('click');
-    setActiveChart(true);
-  }
+export default function Home({ setChart }) {
 
   return (
     <HomeContainer >
@@ -17,7 +12,7 @@ export default function Home({ setActiveChart}) {
           ¿pueden nuestros recuerdos fotográficos <br/> 
           aportar al conocimiento y comportamiento de masas de hielo milenario?
         </p>
-        <GoToButton onClick={()=> handleClick()} >ir a la visualización</GoToButton>
+        <GoToButton onClick={()=> setChart(true)} >ir a la visualización</GoToButton>
       </Headline>
     </HomeContainer>
   )
