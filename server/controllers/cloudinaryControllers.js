@@ -10,20 +10,21 @@ exports.metadata_all = async (req, res) => {
     })
     .then(res => { return res })
     .catch(err => console.error(err));
+
   return res.json( images );
 }
 
-exports.metadata = async (req, res) => {
-  const images = await cloudinary.api
-  .resource( req.params.id ,
-    {
-      colors: true,
-      image_metadata:true,
-    })
-    .then(res => { return res })
-    .catch(err => console.error(err));
-  return res.json( images );
-}
+// exports.metadata = async (req, res) => {
+//   const images = await cloudinary.api
+//   .resource( req.params.id ,
+//     {
+//       colors: true,
+//       image_metadata:true,
+//     })
+//     .then(res => { return res })
+//     .catch(err => console.error(err));
+//   return res.json( images );
+// }
 
 exports.list_all_assets = async ( req, res) => {
   const results = [];  
@@ -49,7 +50,7 @@ exports.list_all_assets = async ( req, res) => {
   return res.json(results);
 };
 
-exports.quantity = async (req, res) => {
+exports.quantity = async (req, res, next) => {
   const images = await cloudinary.api.resources(
     {
       resource_type: "image",
@@ -62,9 +63,50 @@ exports.quantity = async (req, res) => {
   return res.json( images )
 };
 
+exports.quantity_middleware = async (req, res, next) => {
+  req.assets = await cloudinary.api.resources(
+    {
+      resource_type: "image",
+      folder: "lo_q",
+      max_results: req.params.quantity
+    })
+    .then(res => { return res.resources })
+    .catch(err => console.error(err));
+
+  next();
+};
+
+exports.metadata = async (req, res) => {
+  const results = [];
+  const assets_id = await req.assets;
+
+  const requested = async (results) => { 
+    assets_id.forEach(async(asset) => {
+      await cloudinary.api
+      .resource(asset.public_id ,
+      {
+        colors: true,
+        image_metadata:true,
+      })
+      .then(res => {
+        // console.log(res);
+        results.push(res);
+        console.log(results) 
+        // return
+      })
+      .catch(err => console.error(err));
+    });
+  }
+
+  await requested(results);
+
+  return res.json(results)
+}
+
 exports.test = (req, res) => { 
   return res.json( 'cloudinary controllers connected' );
 }
+
 
 const createDate = ( dateString ) => {
   const date = dateString.split(/[-_.]/);

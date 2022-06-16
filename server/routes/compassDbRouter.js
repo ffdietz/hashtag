@@ -1,7 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-
-const compassdb_controllers = require('../controllers/cloudinaryControllers');
+const compassdb_controllers = require('../controllers/compassDbControllers');
 
 /* test*/
 router.get('/', 

@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
-
 const cloudinary_controllers = require('../controllers/cloudinaryControllers');
+const compassdb_controllers = require('../controllers/compassDbControllers');
 
 /* test */
 router.get('/', 
@@ -22,5 +22,10 @@ router.get('/metadata=:id',
 /* request ALL metadata */
 router.get('/metadata-all', 
   cloudinary_controllers.metadata_all);
+
+router.get('/get-metadata-of=:quantity',
+  compassdb_controllers.quantity_middleware,
+  cloudinary_controllers.metadata
+  );
 
 module.exports = router;
