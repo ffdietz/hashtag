@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import styled from "styled-components";
 
-export default function Home() {
+export default function Home({ setChart }) {
+
   return (
     <HomeContainer >
       <Headline>
@@ -11,7 +12,7 @@ export default function Home() {
           ¿pueden nuestros recuerdos fotográficos <br/> 
           aportar al conocimiento y comportamiento de masas de hielo milenario?
         </p>
-        <GoToButton to="/chart" >ir a la visualización</GoToButton>
+        <GoToButton onClick={()=> setChart(true)} >ir a la visualización</GoToButton>
       </Headline>
     </HomeContainer>
   )
@@ -39,7 +40,7 @@ const Headline = styled.div`
   }
 `
 
-const GoToButton = styled(Link)`
+const GoToButton = styled.button`
   position: absolute;
   background-color: transparent;
   border-radius: 5px;

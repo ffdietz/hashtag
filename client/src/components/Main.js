@@ -1,26 +1,15 @@
-import React, { useEffect, useState }  from 'react'
+import React from 'react'
 import { Switch, Route } from "react-router-dom";
 import styled from 'styled-components'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import Project    from './Project';
 import Collective from './Collective'
-import Hashtag    from './Hashtag/Hashtag'
 import Contact    from './Contact'
 import Home       from './Home'
 
-export default function Main(props){
-  const [assets, setAssets] = useState('');
+export default function Main({ setChart }){
 
-  useEffect( () => {
-    // console.log(props);
-    // const getAssets = async() => {
-    //       console.log(props)
-    //       }
-    //       // setAssets(props.data); 
-    // }
-    // getAssets();
-  }, [] );
   return (
     <MainContainer>
       <Route render={({location}) => (
@@ -31,11 +20,14 @@ export default function Main(props){
             classNames="fade"
           >
             <Switch location = { location } >
-              <Route exact path = '/'           component = { Home } />
-              {/* <Route exact path = '/chart'      component = { Hashtag } props={ assets } /> */}
-              <Route exact path = '/hashtag'    component = { Project } />
-              <Route exact path = '/collective' component = { Collective } />
-              <Route exact path = '/contact'    component = { Contact } />
+              <Route exact path = '/'>  <Home setChart={setChart}/>
+              </Route>
+              <Route exact path = '/hashtag'> <Project/>
+              </Route>
+              <Route exact path = '/collective'>  <Collective/> 
+              </Route>
+              <Route exact path = '/contact'> <Contact/>
+              </Route>
             </Switch>
           </CSSTransition>
         </TransitionGroup>

@@ -7,7 +7,7 @@ const getDate = dateString => {
   return new Date(dateString);
 };
 
-export default function ImgChart( props ) {
+export default function HashtagChart( props ) {
   const svgRef = useRef();
   const wrapperRef = useRef();
   const dimensions = useResizeObserver(wrapperRef);  
@@ -51,8 +51,8 @@ export default function ImgChart( props ) {
     const rectSize = 40;
 
     const initialZoom = d3.zoomIdentity
-      .scale(0.2)
-      .translate((0.2 * chartWidth)/2 , height * 1 );
+      .scale(1.2)
+      .translate((1.2 * chartWidth)/2 , height * 1 );
 
     d3.zoom()
     .translateTo(svg, initialZoom.x, initialZoom.y);

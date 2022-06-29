@@ -4,9 +4,9 @@ const CloudImage = require("./models/CloudImage");
 const axios = require("axios");
 let saveCounter = 0;
 
-function beginConnection(uri){
+function beginConnection(remote){
     mongoose
-        .connect(uri, {
+        .connect(remote? remote_db_uri : local_db_uri, {
             useCreateIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true
@@ -69,10 +69,14 @@ const updating = async (url) => {
         .catch(error => { console.log(error)    })
 }
 
-const db_uri = process.env.DB_URI;
+const remote_db_uri = process.env.DB_URI;
+const local_db_uri = "mongodb://localhost:27017/hashtag";
 const url_consulted = "http://localhost:5500/cloudinary/all-assets";
 const showResults = true;
+const remotePopulation = false;
 
-beginConnection(db_uri);
+beginConnection(remotePopulation);
 deleteCollection("cloudimages");
 updating(url_consulted);
+
+//node seed.js// to run

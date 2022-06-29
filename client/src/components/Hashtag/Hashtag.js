@@ -1,39 +1,35 @@
-import React, { 
-  useState, 
-  useEffect 
-}from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import styled from 'styled-components';
 import HashtagChart from './HashtagChart';
 
 export default function Hashtag() {
-const [gallery, setGallery] = useState('');
-const [loading, setLoading] = useState(true);
-
-useEffect( () => {
-  const getGallery = async() => {
-    await axios.get(URL_REQUEST)
-      .then(res => {
-        setGallery(res.data);
-        setLoading(false);
-      })
-      .catch(error => console.error(error));
+  const [gallery, setGallery] = useState('');
+  const [loading, setLoading] = useState(true);
+  
+  useEffect( () => {
+    const getGallery = async() => {
+      await axios.get(URL_REQUEST)
+        .then(res => {
+          setGallery(res.data);
+          setLoading(false);
+        })
+        .catch(error => console.error(error));
+    }
+    getGallery();
+  }, [] );
+  
+  return (
+    <VisualizationWrapper>
+      { loading && <p>loading</p> }
+      { !loading && <HashtagChart data={ gallery } /> }
+    </VisualizationWrapper>
+    )
   }
-  getGallery();
-}, [] );
-
-return (
-  <VisualizationWrapper>
-    { loading && <p>loading</p> }
-    { !loading && <HashtagChart data={ gallery } /> }
-  </VisualizationWrapper>
-  )
-}
 
 const VisualizationWrapper = styled.div`
   margin-top: -50%;
-  z-index: 1;
-  /* z-index: 0; */
+  z-index: {{ activeChart? 1 : 0}};
   position: static;
 `
 

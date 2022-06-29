@@ -14,7 +14,7 @@ const cloudinary_controllers = require('../controllers/cloudinaryControllers');
 // });
 
 /* test*/
-router.get('/', cloudinary_controllers.test );
+// router.get('/', cloudinary_controllers.test );
 
 
 module.exports = router;

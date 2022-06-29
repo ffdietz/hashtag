@@ -39,14 +39,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 // default value local title
 app.locals.title = '#GlaciarGrey * Ultima Esperanza';
 
-const index = require('./routes/index');
-app.use('/', index);
-
-//////////////////
+//CLOUDINARY ROUTES
 const cloudinaryRouter = require('./routes/cloudinaryRouter');
 app.use('/cloudinary', cloudinaryRouter);
-/////////////////
 
+//MONGODB COMPASS ROUTES
+const compassDbRouter = require('./routes/compassDbRouter');
+app.use('/local-db', compassDbRouter);
+
+//REMOTE DB ROUTES
+const index = require('./routes/index');
+app.use('/', index);
 
 const { mainModule } = require('process');
 
